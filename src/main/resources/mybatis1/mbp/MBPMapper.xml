@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MBPMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_problem_info
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		PRO_CODE,	
+		PRO_TITLE,	
+		PRO_REPORT_USER,	
+		PRO_ACCEPT_USER,	
+		PRO_DEPART,	
+		PRO_SYS_TYPE,	
+		PRO_TYPE_ID,	
+		PRO_TAG,	
+		PRO_PRIORITY,	
+		PRO_RESOLVE_TIME,	
+		PRO_CONTENT,	
+		PRO_STATE,	
+		UPDATE_DATE,	
+		BILL_USER,	
+		BILL_DATE,	
+		CUST1,	
+		CUST2,	
+		CUST3,	
+		CUST4,	
+		CUST5,	
+		CUST6
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="insertField">
+		PRO_CODE,	
+		PRO_TITLE,	
+		PRO_REPORT_USER,	
+		PRO_ACCEPT_USER,	
+		PRO_DEPART,	
+		PRO_SYS_TYPE,	
+		PRO_TYPE_ID,	
+		PRO_TAG,	
+		PRO_PRIORITY,	
+		PRO_RESOLVE_TIME,	
+		PRO_CONTENT,	
+		<!-- PRO_STATE,	 -->
+		UPDATE_DATE,	
+		<!-- BILL_STATE, -->
+		BILL_USER,	
+		BILL_DATE,	
+		CUST1,	
+		CUST2,	
+		CUST3,	
+		CUST4,	
+		CUST5,	
+		CUST6
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{PRO_CODE},	
+		#{PRO_TITLE},	
+		#{PRO_REPORT_USER},	
+		#{PRO_ACCEPT_USER},	
+		#{PRO_DEPART},	
+		#{PRO_SYS_TYPE},	
+		#{PRO_TYPE_ID},	
+		#{PRO_TAG},	
+		#{PRO_PRIORITY},	
+		#{PRO_RESOLVE_TIME},	
+		#{PRO_CONTENT},	
+		<!-- #{PRO_STATE},	 -->
+		#{UPDATE_DATE},	
+		<!-- #{BILL_STATE},	 -->
+		#{BILL_USER},	
+		#{BILL_DATE},	
+		#{CUST1},	
+		#{CUST2},	
+		#{CUST3},	
+		#{CUST4},	
+		#{CUST5},	
+		#{CUST6}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="insertField"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			PRO_CODE = #{PRO_CODE}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			PRO_CODE = #{PRO_CODE},
+			PRO_TITLE = #{PRO_TITLE},
+			PRO_REPORT_USER = #{PRO_REPORT_USER},
+			PRO_ACCEPT_USER = #{PRO_ACCEPT_USER},
+			PRO_DEPART = #{PRO_DEPART},
+			PRO_SYS_TYPE = #{PRO_SYS_TYPE},
+			PRO_TYPE_ID = #{PRO_TYPE_ID},
+			PRO_TAG = #{PRO_TAG},
+			PRO_PRIORITY = #{PRO_PRIORITY},
+			PRO_RESOLVE_TIME = #{PRO_RESOLVE_TIME},
+			PRO_CONTENT = #{PRO_CONTENT},
+			<!-- PRO_STATE = #{PRO_STATE}, -->
+			UPDATE_DATE = #{UPDATE_DATE},
+			CUST1 = #{CUST1},
+			CUST2 = #{CUST2},
+			CUST3 = #{CUST3},
+			CUST4 = #{CUST4},
+			CUST5 = #{CUST5},
+			CUST6 = #{CUST6}
+		where 
+		PRO_CODE = #{PRO_CODE}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		SELECT A.*,
+		sys_user1.NAME PRO_REPORT_USER_NAME,
+		sys_user2.NAME PRO_ACCEPT_USER_NAME,
+		depart.NAME PRO_DEPART_NAME,
+		problemType.PRO_TYPE_NAME,
+		dic.NAME PRO_SYS_TYPE_NAME
+		FROM tb_problem_info A
+		
+		LEFT JOIN sys_user sys_user1
+		ON A.PRO_REPORT_USER=sys_user1.USER_ID
+		
+		LEFT JOIN sys_user sys_user2
+		ON A.PRO_ACCEPT_USER=sys_user2.USER_ID
+		
+		LEFT JOIN oa_department depart
+		ON A.PRO_DEPART=depart.DEPARTMENT_CODE
+		
+		LEFT JOIN tb_problem_type problemType
+		ON A.PRO_TYPE_ID=problemType.PRO_TYPE_ID
+		
+		LEFT JOIN (SELECT DICT_CODE,NAME FROM sys_dictionaries WHERE PARENT_CODE = 'SYSTEM' ) dic 
+    	ON A.PRO_SYS_TYPE = dic.DICT_CODE 
+		where 
+			A.PRO_CODE = #{PRO_CODE}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		SELECT A.*,
+		depart.NAME PRO_DEPART_NAME,
+		problemType.PRO_TYPE_NAME,
+		dic.NAME PRO_SYS_TYPE_NAME
+		FROM tb_problem_info A
+		
+		<!-- LEFT JOIN tb_problem_assign problemAssign
+		ON A.PRO_CODE=problemAssign.PRO_CODE -->
+		
+		LEFT JOIN oa_department depart
+		ON A.PRO_DEPART=depart.DEPARTMENT_CODE
+		
+		LEFT JOIN tb_problem_type problemType
+		ON A.PRO_TYPE_ID=problemType.PRO_TYPE_ID
+		
+		LEFT JOIN (SELECT DICT_CODE,NAME FROM sys_dictionaries WHERE PARENT_CODE = 'SYSTEM' ) dic 
+    	ON A.PRO_SYS_TYPE = dic.DICT_CODE 
+		
+		<where>
+			<!-- A.PRO_ACCEPT_USER=#{pd.BILL_USER} 
+			OR A.BILL_USER=#{pd.BILL_USER} -->
+			<if test="pd.PRO_ACCESS!= null and pd.ACCESS='REPORT'">
+				${pd.PRO_ACCESS}
+			</if> 
+		
+			<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+				and
+					(
+					
+						PRO_TITLE LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					<!--	根据需求自己加检索条件
+						 or 
+						字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+					-->
+					)
+			</if>
+			<if test="pd.PRO_STATE != null and '' != pd.PRO_STATE" >           
+	          AND A.PRO_STATE = #{pd.PRO_STATE}
+	        </if>
+		</where>
+		ORDER BY pro_code DESC
+	</select>
+	
+	<select id="count" parameterType="pd" resultType="int">
+		select count(*) from <include refid="tableName"></include> 
+		<!-- <where>
+			<if test="menuId != null and '' != menuId" >           
+	          AND   menuId = #{menuId}
+	        </if>
+        </where> -->
+	</select>
+	
+	<!-- Jq分页列表 -->
+	<select id="datalistJqPage" parameterType="jqPage" resultType="pd">
+		SELECT A.*,A.PRO_CODE as PRO_CODE1,
+		depart.NAME PRO_DEPART_NAME,
+		problemType.PRO_TYPE_NAME,
+		dic.NAME PRO_SYS_TYPE_NAME
+		FROM tb_problem_info A
+		
+		<!-- LEFT JOIN tb_problem_assign problemAssign
+		ON A.PRO_CODE=problemAssign.PRO_CODE -->
+		
+		LEFT JOIN oa_department depart
+		ON A.PRO_DEPART=depart.DEPARTMENT_CODE
+		
+		LEFT JOIN tb_problem_type problemType
+		ON A.PRO_TYPE_ID=problemType.PRO_TYPE_ID
+		
+		LEFT JOIN (SELECT DICT_CODE,NAME FROM sys_dictionaries WHERE PARENT_CODE = 'SYSTEM' ) dic 
+    	ON A.PRO_SYS_TYPE = dic.DICT_CODE 
+		
+		<where>
+			A.PRO_STATE !='1'
+			<!-- A.PRO_ACCEPT_USER=#{pd.BILL_USER} 
+			OR A.BILL_USER=#{pd.BILL_USER} -->
+			<!-- <if test="pd.PRO_ACCESS!= null and pd.ACCESS='REPORT'">
+				${pd.PRO_ACCESS}
+			</if>  -->
+		
+			<if test="pd.PRO_DEPARTS!= null and pd.PRO_DEPARTS != ''"><!-- 根据本门单位检索 -->
+				and PRO_DEPART in
+				<foreach item="item" index="index" collection="pd.PRO_DEPARTS"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="pd.BILL_USER != null and '' != pd.BILL_USER" >           
+	          AND A.BILL_USER = #{pd.BILL_USER}
+	        </if>
+			<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+				and
+					(
+					
+						PRO_TITLE LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					<!--	根据需求自己加检索条件
+						 or 
+						字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+					-->
+					)
+			</if>
+			<if test="pd.PRO_STATE != null and '' != pd.PRO_STATE" >           
+	          AND A.PRO_STATE = #{pd.PRO_STATE}
+	        </if>
+	        
+	        <if test="pd.filterWhereResult != null">
+				${pd.filterWhereResult}
+			</if>
+		</where>
+		<!-- ORDER BY pro_code DESC -->
+		<if test="sidx != null">
+			order by ${sidx} ${sord}
+		</if>
+		<if test="currentResult != null and rowNum != null" >           
+              limit #{currentResult}, #{rowNum} 
+        </if>
+	</select>
+	
+	<select id="countJqGrid" parameterType="pd" resultType="int">
+		select count(*) from <include refid="tableName"></include> 
+		<where>
+			PRO_STATE !='1'
+			<!-- A.PRO_ACCEPT_USER=#{pd.BILL_USER} 
+			OR A.BILL_USER=#{pd.BILL_USER} -->
+			<!-- <if test="pd.PRO_ACCESS!= null and pd.ACCESS='REPORT'">
+				${pd.PRO_ACCESS}
+			</if>  -->
+			<if test="pd.PRO_DEPARTS!= null and pd.PRO_DEPARTS != ''"><!-- 根据本门单位检索 -->
+				and PRO_DEPART in
+				<foreach item="item" index="index" collection="pd.PRO_DEPARTS"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			
+	        <if test="pd.BILL_USER != null and '' != pd.BILL_USER" >           
+	          AND BILL_USER = #{pd.BILL_USER}
+	        </if>
+	        <!-- <if test="pd.PRO_ACCEPT_USER != null and '' != pd.PRO_ACCEPT_USER" >           
+	          AND PRO_ACCEPT_USER = #{pd.BILL_USER}
+	        </if>
+	        <if test="pd.PRO_ACCEPT_USER != null and '' != pd.PRO_ACCEPT_USER and pd.BILL_USER != null and '' != pd.BILL_USER" >           
+	          AND (BILL_USER = #{pd.BILL_USER} or PRO_ACCEPT_USER = #{pd.BILL_USER})
+	        </if> -->
+			<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+				and
+					(
+					
+						PRO_TITLE LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					<!--	根据需求自己加检索条件
+						 or 
+						字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+					-->
+					)
+			</if>
+			<if test="pd.PRO_STATE != null and '' != pd.PRO_STATE" >           
+	          AND PRO_STATE = #{pd.PRO_STATE}
+	        </if>
+	        
+	        <if test="pd.filterWhereResult != null">
+				${pd.filterWhereResult}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			PRO_CODE in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!-- 提交 -->
+	<update id="commit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			PRO_STATE = #{PRO_STATE},
+			UPDATE_DATE = #{UPDATE_DATE}
+		where 
+		PRO_CODE = #{PRO_CODE}
+	</update>
+	
+	<!-- 取消提交 -->
+	<update id="cancel" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			PRO_STATE = #{PRO_STATE},
+			UPDATE_DATE = #{UPDATE_DATE}
+		where 
+		PRO_CODE = #{PRO_CODE}
+	</update>
+	
+	<!-- 问题领取 -->
+	<update id="proGet" parameterType="pd">
+		update 
+		<include refid="tableName"></include>
+		set 
+			PRO_STATE = #{PRO_STATE},
+			UPDATE_DATE = #{UPDATE_DATE}
+		where 
+		PRO_CODE = #{PRO_CODE}
+	</update>
+	
+	<!-- 获取问题分配列表-->
+	<select id="getProAssigns" parameterType="pd" resultType="pd">
+		select A.*,
+		<!-- acceptUser.NAME PRO_ACCEPT_USER_NAME,
+		assignUser.NAME BILL_USER_NAME, -->
+		problemType.PRO_TYPE_NAME,
+		dic.NAME PRO_SYS_TYPE_NAME
+		FROM tb_problem_assign A
+		
+		<!-- left join sys_user acceptUser
+		on A.PRO_ACCEPT_USER=acceptUser.USER_ID
+		
+		LEFT JOIN sys_user assignUser
+		ON A.BILL_USER=assignUser.USER_ID -->
+		
+		LEFT JOIN tb_problem_type problemType
+		ON A.PRO_TYPE_ID=problemType.PRO_TYPE_ID
+		
+		LEFT JOIN (SELECT DICT_CODE,NAME FROM sys_dictionaries WHERE PARENT_CODE = 'SYSTEM' ) dic 
+    	ON A.PRO_SYS_TYPE = dic.DICT_CODE 
+		
+		
+		where A.PRO_CODE=#{PRO_CODE}
+	</select>
+	
+	<!-- 问题分配-->
+	<insert id="addAssign" parameterType="pd">
+		insert into tb_problem_assign
+		(
+			PRO_CODE,PRO_ACCEPT_USER,PRO_SYS_TYPE,PRO_TYPE_ID,PRO_PRIORITY,BILL_USER,BILL_DATE,CUST1,CUST2,CUST3
+		) values (
+			#{PRO_CODE},#{PRO_ACCEPT_USER},#{PRO_SYS_TYPE},#{PRO_TYPE_ID},#{PRO_PRIORITY},#{BILL_USER},#{BILL_DATE},#{CUST1},#{CUST2},#{CUST3}	
+		); 
+		
+		update 
+		<include refid="tableName"></include>
+		set 
+			PRO_ACCEPT_USER = #{PRO_ACCEPT_USER},
+			PRO_SYS_TYPE = #{PRO_SYS_TYPE},
+			PRO_TYPE_ID = #{PRO_TYPE_ID},
+			PRO_PRIORITY = #{PRO_PRIORITY}
+		where 
+		PRO_CODE = #{PRO_CODE};
+	</insert>
+	
+	<!-- 取消分配-->
+	<delete id="deleteAssign" parameterType="pd">
+		delete from 
+		tb_problem_assign
+		where 
+			ASSIGN_ID = #{ASSIGN_ID}
+	</delete>
+	
+	<!-- 问题回复-->
+	<insert id="addAnswer" parameterType="pd">
+		insert into tb_problem_answer
+		(
+			PRO_CODE,OPER_TYPE,BILL_USER,BILL_DATE,ANSWER_CONTENT,CUST1,CUST2,CUST3
+		) values (
+			#{PRO_CODE},#{OPER_TYPE},#{BILL_USER},#{BILL_DATE},#{ANSWER_CONTENT},#{CUST1},#{CUST2},#{CUST3}	
+		);
+	</insert>
+	
+	<!-- 更新问题回复 -->
+	<update id="updateAnswer" parameterType="pd">
+		update 
+		tb_problem_answer
+		set 
+			ANSWER_CONTENT = #{ANSWER_CONTENT}
+		where 
+		ANSWER_ID = #{ANSWER_ID}
+	</update>
+	
+	<!-- 取消回复-->
+	<delete id="deleteAnswer" parameterType="pd">
+		delete from 
+		tb_problem_answer
+		where 
+			ANSWER_ID = #{ANSWER_ID}
+	</delete>
+	
+	<!-- 获取问题关闭信息列表 -->
+	<select id="getProCloses" parameterType="pd" resultType="pd">
+		select *,PRO_CODE as PRO_CODE1 from tb_problem_close 
+		where PRO_CODE=#{PRO_CODE}
+	</select>
+	
+	<!-- 获取关闭详情 -->
+	<select id="getCloseContent" parameterType="pd" resultType="pd">
+		SELECT *
+		FROM tb_problem_close
+		where 
+			PRO_CODE = #{PRO_CODE}
+	</select>
+	
+	<!-- 问题关闭-->
+	<insert id="addClose" parameterType="pd">
+		delete from 
+		tb_problem_close
+		where 
+			PRO_CODE = #{PRO_CODE};
+	
+		insert into tb_problem_close
+		(
+			PRO_CODE,BILL_USER,BILL_DATE,CLOSE_CONTENT,CUST1,CUST2,CUST3
+		) values (
+			#{PRO_CODE},#{BILL_USER},#{BILL_DATE},#{CLOSE_CONTENT},#{CUST1},#{CUST2},#{CUST3}	
+		);
+		
+		update tb_problem_info
+		set PRO_STATE=#{PRO_STATE}
+		where PRO_CODE=#{PRO_CODE}
+	</insert>
+	
+	<!-- 取消关闭-->
+	<update id="deleteClose" parameterType="pd">
+		delete from 
+		tb_problem_close
+		where 
+			PRO_CODE = #{PRO_CODE};
+			
+		update tb_problem_info
+		set PRO_STATE=#{PRO_STATE}
+		where PRO_CODE=#{PRO_CODE}
+	</update>
+	
+	<!-- 获取问题回复信息列表 -->
+	<select id="getProAnswers" parameterType="pd" resultType="pd">
+		select A.*,u.NAME from tb_problem_answer A 
+		left join sys_user u
+		on A.BILL_USER=u.USER_ID
+		where PRO_CODE=#{PRO_CODE}
+	</select>
+	
+	<!-- 获取问题回复信息内容 -->
+	<select id="getAnswerContent" parameterType="pd" resultType="pd">
+		select * from tb_problem_answer
+		where ANSWER_ID=#{ANSWER_ID}
+	</select>
+	
+	<!-- 获取问题日志信息列表 -->
+	<select id="getProLog" parameterType="pd" resultType="pd">
+		select A.*,u.NAME from tb_problem_log A
+		left join sys_user u
+		on A.CREATE_USER=u.USER_ID
+		where A.PRO_CODE=#{PRO_CODE}
+		order by LOG_ID desc
+	</select>
+	
+	<!-- 问题日志-->
+	<insert id="addLog" parameterType="pd">
+		insert into tb_problem_log
+		(
+			PRO_CODE,CREATE_USER,CREATE_DATE,PRO_EVENT,CLIENT_IP,CUST1,CUST2,CUST3
+		) values (
+			#{PRO_CODE},#{CREATE_USER},#{CREATE_DATE},#{PRO_EVENT},#{CLIENT_IP},#{CUST1},#{CUST2},#{CUST3}	
+		);
+	</insert>
+		<!-- 获取问题统计列表(按模块) -->
+	<select id="listProModStatistic" parameterType="page" resultType="pd">
+
+				SELECT 
+			PRO_SYS_TYPE AS TYPE,NOWWEEK, NOWWEEKSOLVE,NOWWEEKNOTSOLVE,
+	 		(CASE WHEN NOWWEEK<![CDATA[<>]]>0 THEN CONCAT( ROUND( NOWWEEKSOLVE/NOWWEEK * 100, 2 )) ELSE 0 END)  NOWWEEKSOLVERATE,
+   			NOWYEAR,NOWYEARSOLVE,NOWYEARNOTSOLVE,
+   			(CASE WHEN NOWYEAR<![CDATA[<>]]>0 THEN CONCAT( ROUND( NOWYEARSOLVE/NOWYEAR * 100, 2 )) ELSE 0 END)  NOWYEARSOLVERATE
+	FROM
+		( 
+		SELECT t.PRO_SYS_TYPE,
+		SUM(CASE WHEN (BILL_DATE BETWEEN #{pd.START_DATE} AND #{pd.END_DATE}) THEN 1 ELSE 0 END) AS NOWWEEK,
+		SUM(CASE WHEN (BILL_DATE BETWEEN #{pd.START_DATE} AND #{pd.END_DATE}) AND t.PRO_STATE='1'  THEN 1 ELSE 0 END) AS NOWWEEKSOLVE, 
+		SUM(CASE WHEN (BILL_DATE BETWEEN #{pd.START_DATE} AND #{pd.END_DATE}) AND t.PRO_STATE<![CDATA[<>]]>'1'  THEN 1 ELSE 0 END) AS NOWWEEKNOTSOLVE,
+		SUM(CASE WHEN SUBSTRING(BILL_DATE,1,4)=#{pd.YEAR}  THEN 1 ELSE 0 END) AS NOWYEAR,
+		SUM(CASE WHEN SUBSTRING(BILL_DATE,1,4)=#{pd.YEAR} AND t.PRO_STATE='1'  THEN 1 ELSE 0 END) AS NOWYEARSOLVE, 
+		SUM(CASE WHEN SUBSTRING(BILL_DATE,1,4)=#{pd.YEAR} AND t.PRO_STATE<![CDATA[<>]]>'1'  THEN 1 ELSE 0 END) AS NOWYEARNOTSOLVE
+		FROM tb_problem_info t GROUP BY t.PRO_SYS_TYPE) AS t
+	</select>
+			<!-- 获取问题统计列表(按类型) -->
+	<select id="listProTypeStatistic" parameterType="page" resultType="pd">
+			SELECT 
+			PRO_TYPE_ID AS TYPE,NOWWEEK, NOWWEEKSOLVE,NOWWEEKNOTSOLVE,
+	 		(CASE WHEN NOWWEEK<![CDATA[<>]]>0 THEN CONCAT( ROUND( NOWWEEKSOLVE/NOWWEEK * 100, 2 )) ELSE 0 END)  NOWWEEKSOLVERATE,
+   			NOWYEAR,NOWYEARSOLVE,NOWYEARNOTSOLVE,
+   			(CASE WHEN NOWYEAR<![CDATA[<>]]>0 THEN CONCAT( ROUND( NOWYEARSOLVE/NOWYEAR * 100, 2 )) ELSE 0 END)  NOWYEARSOLVERATE
+	FROM
+		( 
+		SELECT t.PRO_TYPE_ID,
+		SUM(CASE WHEN (BILL_DATE BETWEEN #{pd.START_DATE} AND #{pd.END_DATE}) THEN 1 ELSE 0 END) AS NOWWEEK,
+		SUM(CASE WHEN (BILL_DATE BETWEEN #{pd.START_DATE} AND #{pd.END_DATE}) AND t.PRO_STATE='1'  THEN 1 ELSE 0 END) AS NOWWEEKSOLVE, 
+		SUM(CASE WHEN (BILL_DATE BETWEEN #{pd.START_DATE} AND #{pd.END_DATE}) AND t.PRO_STATE<![CDATA[<>]]>'1'  THEN 1 ELSE 0 END) AS NOWWEEKNOTSOLVE,
+		SUM(CASE WHEN SUBSTRING(BILL_DATE,1,4)=#{pd.YEAR}  THEN 1 ELSE 0 END) AS NOWYEAR,
+		SUM(CASE WHEN SUBSTRING(BILL_DATE,1,4)=#{pd.YEAR} AND t.PRO_STATE='1'  THEN 1 ELSE 0 END) AS NOWYEARSOLVE, 
+		SUM(CASE WHEN SUBSTRING(BILL_DATE,1,4)=#{pd.YEAR} AND t.PRO_STATE<![CDATA[<>]]>'1'  THEN 1 ELSE 0 END) AS NOWYEARNOTSOLVE
+		FROM tb_problem_info t GROUP BY t.PRO_TYPE_ID) AS t
+	</select>
+		<!-- 获取问题日志各节点信息列表，用于时效分析 -->
+	<select id="getProLogTime" parameterType="page" resultType="pd">	
+		SELECT tb_problem_log.PRO_CODE PRO_CODE,WTFQ,WTFP,WTLQ,WTHF,WTGB,WTQX FROM
+		tb_problem_log
+		LEFT JOIN 
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTFQ FROM tb_problem_log WHERE  PRO_EVENT='发起问题' GROUP BY PRO_CODE) A
+		ON tb_problem_log.PRO_CODE=A.PRO_CODE  
+		 LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTFP FROM tb_problem_log WHERE  PRO_EVENT='问题分配' GROUP BY PRO_CODE) B
+		 ON tb_problem_log.PRO_CODE=B.PRO_CODE  
+		 LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTLQ FROM tb_problem_log WHERE  PRO_EVENT='问题领取' GROUP BY PRO_CODE) C
+		ON tb_problem_log.PRO_CODE=C.PRO_CODE  
+		LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTHF FROM tb_problem_log WHERE  PRO_EVENT='问题回复' GROUP BY PRO_CODE) D
+		ON tb_problem_log.PRO_CODE=D.PRO_CODE  
+		LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTGB FROM tb_problem_log WHERE  PRO_EVENT='关闭问题' GROUP BY PRO_CODE) E
+		ON tb_problem_log.PRO_CODE=E.PRO_CODE  
+		LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTQX FROM tb_problem_log WHERE  PRO_EVENT='取消关闭问题' GROUP BY PRO_CODE) F
+		ON tb_problem_log.PRO_CODE=F.PRO_CODE  
+		LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTCH FROM tb_problem_log WHERE  PRO_EVENT='问题撤回' GROUP BY PRO_CODE) G
+		ON tb_problem_log.PRO_CODE=G.PRO_CODE  
+		LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTFPQX FROM tb_problem_log WHERE  PRO_EVENT='问题分配取消' GROUP BY PRO_CODE) H
+		ON tb_problem_log.PRO_CODE=H.PRO_CODE  
+		LEFT JOIN
+		(SELECT PRO_CODE,PRO_EVENT,MAX(CREATE_DATE) WTLQQX FROM tb_problem_log WHERE  PRO_EVENT='问题领取取消' GROUP BY PRO_CODE) I
+		ON tb_problem_log.PRO_CODE=I.PRO_CODE  	
+		WHERE 
+		1=1
+		<if test="pd.START_DATE!=null and pd.START_DATE!='' "> 
+			  and  SUBSTRING(CREATE_DATE,1,10) &gt;= #{pd.START_DATE} 
+		</if>
+		<if test="pd.END_DATE!=null and pd.END_DATE!=''"> 
+			 and  SUBSTRING(CREATE_DATE,1,10) &lt;= #{pd.END_DATE} 
+		</if> 
+		<if test="pd.PRO_CODE!=null and pd.PRO_CODE!=''"> 
+			 and  PRO_CODE= #{pd.PRO_CODE} 
+		</if> 
+			GROUP BY tb_problem_log.PRO_CODE
+	</select>
+</mapper>

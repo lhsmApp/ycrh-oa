@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GRCPersonMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_di_grc_person
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		BUSI_DATE,
+		STAFF_CODE,	
+		STAFF_NAME,	
+		STAFF_UNIT,	
+		STAFF_DEPART,	
+		STAFF_POSITION,	
+		STAFF_JOB,	
+		PHONE,	
+		MOBILE_PHONE,
+		ZSY_MAIL,
+		STATE,
+		BILL_USER,	
+		USER_DEPART,
+		BILL_DATE,
+		CUST_COLUMN1
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{BUSI_DATE},
+		#{STAFF_CODE},	
+		#{STAFF_NAME},	
+		#{STAFF_UNIT},	
+		#{STAFF_DEPART},	
+		#{STAFF_POSITION},	
+		#{STAFF_JOB},	
+		#{PHONE},	
+		#{MOBILE_PHONE},	
+		#{ZSY_MAIL},
+		#{STATE},
+		#{BILL_USER},	
+		#{USER_DEPART},
+		#{BILL_DATE},
+		#{CUST_COLUMN1}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+			<include refid="Field"></include>
+		) value (
+			<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			STAFF_CODE = #{STAFF_CODE},
+			STAFF_NAME = #{STAFF_NAME},
+			STAFF_UNIT = #{STAFF_UNIT},
+			STAFF_DEPART = #{STAFF_DEPART},
+			STAFF_POSITION = #{STAFF_POSITION},
+			STAFF_JOB = #{STAFF_JOB},
+			USER_DEPART = #{USER_DEPART},
+			PHONE = #{PHONE},
+			MOBILE_PHONE = #{MOBILE_PHONE},
+			ZSY_MAIL = #{ZSY_MAIL}
+		where 
+		ID = #{ID}
+	</update>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			ID,	
+			STAFF_CODE,	
+			STAFF_NAME,	
+			STAFF_UNIT,	
+			STAFF_DEPART,	
+			STAFF_POSITION,	
+			STAFF_JOB,	
+			PHONE,	
+			MOBILE_PHONE,	
+			ZSY_MAIL
+		from 
+		<include refid="tableName"></include>
+		where STATE = 1
+		<if test="pd.busiDate != null and pd.busiDate != ''">
+		and 
+			BUSI_DATE = #{pd.busiDate}
+		</if>
+		<if test="pd.USER_DEPART!= null and pd.USER_DEPART!= ''">
+			and USER_DEPART = #{pd.USER_DEPART}
+		</if>
+		<if test="pd.CUST_COLUMN1!= null">
+			and CUST_COLUMN1 = #{pd.CUST_COLUMN1}
+		</if>
+	</select>
+	
+	<!--业务期间集合  -->
+	<select id="listBusiDate" parameterType="pd" resultType="pd">
+		select BUSI_DATE from  <include refid="tableName"></include> group by BUSI_DATE
+	</select>
+	
+	<!-- 批量删除 -->
+	<update id="deleteAll" parameterType="String">
+		update
+		<include refid="tableName"></include>
+		set
+			STATE = 0
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+	
+	<!-- *********************导入导出********************************* -->
+	<!-- 导出列表 -->
+	<select id="exportList" parameterType="Page" resultType="pd">
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1
+			
+			<if test="pd.BUSI_DATE!= null and pd.BUSI_DATE!= ''">
+			and BUSI_DATE = #{pd.BUSI_DATE}
+			</if>
+			<if test="pd.USER_DEPART!= null and pd.USER_DEPART!= ''">
+				and USER_DEPART = #{pd.USER_DEPART}
+			</if>
+			<if test="pd.CUST_COLUMN1!= null">
+				and CUST_COLUMN1 = #{pd.CUST_COLUMN1}
+			</if>
+		order by 
+			ID,STAFF_NAME
+	</select>
+	
+	<!-- 更新数据 -->
+	<update id="delAndIns" parameterType="pd">
+		<foreach item="item" index="index" collection="list" open=" " separator=" " close=" ">
+		    delete from <include refid="tableName"></include>
+		    where ID = #{item.ID};
+	        insert into 
+	        <include refid="tableName"></include>
+		       (
+					<include refid="Field"></include>
+				) value (
+					#{item.BUSI_DATE},
+					#{item.STAFF_CODE},	
+					#{item.STAFF_NAME},	
+					#{item.STAFF_UNIT},	
+					#{item.STAFF_DEPART},	
+					#{item.STAFF_POSITION},	
+					#{item.STAFF_JOB},	
+					#{item.PHONE},	
+					#{item.MOBILE_PHONE},	
+					#{item.ZSY_MAIL},
+					#{item.STATE},
+					#{item.BILL_USER},	
+					#{item.USER_DEPART},
+					#{item.BILL_DATE},
+					#{item.CUST_COLUMN1}
+				);
+		</foreach>
+	</update>
+	
+	<!-- 导出模板 -->
+	<select id="exportModel" parameterType="pd" resultType="pd">
+		select 
+			<include refid="Field"></include> 
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1 
+		limit 1
+	</select>
+	<!-- 导出模板 -->
+	<select id="findSysDeptTime" parameterType="pd" resultType="pd">
+		select 
+			BUSI_TYPE,
+			LTD_DAY
+		from
+			tb_sys_dept_ltd_time
+		where
+			STATE = 1
+		<if test="DEPT_CODE != null and DEPT_CODE != ''">
+		and 
+			DEPT_CODE = #{DEPT_CODE}
+		</if>
+		<if test="BUSI_TYPE != null and BUSI_TYPE != ''">
+		and 
+			BUSI_TYPE = #{BUSI_TYPE}
+		</if>
+	</select>
+	
+</mapper>

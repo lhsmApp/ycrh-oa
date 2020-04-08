@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ERPTempAcctApplicationMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_di_erp_taa
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		BUSI_DATE,	
+		STAFF_CODE,	
+		STAFF_NAME,	
+		DEPART_CODE,	
+		UNITS_DEPART,	
+		STAFF_POSITION,	
+		STAFF_JOB,	
+		STAFF_MODULE,	
+		PHONE,	
+		MAIL,	
+		APPLY_DATE,	
+		CANCEL_DATE,	
+		APPLY_TEMP_REASON,	
+		UKEY_NUM,	
+		NOTE,
+		CONFIRM_STATE,
+		STATE,
+		BILL_USER,
+		USER_DEPART,
+		BILL_DATE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{BUSI_DATE},
+		#{STAFF_CODE},	
+		#{STAFF_NAME},	
+		#{DEPART_CODE},	
+		#{UNITS_DEPART},	
+		#{STAFF_POSITION},	
+		#{STAFF_JOB},	
+		#{STAFF_MODULE},	
+		#{PHONE},	
+		#{MAIL},	
+		#{APPLY_DATE},	
+		#{CANCEL_DATE},	
+		#{APPLY_TEMP_REASON},	
+		#{UKEY_NUM},	
+		#{NOTE},
+		#{CONFIRM_STATE},
+		#{STATE},
+		#{BILL_USER},
+		#{USER_DEPART},
+		#{BILL_DATE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+			<include refid="tableName"></include>
+		(
+			<include refid="Field"></include>
+		) values (
+			<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			STAFF_CODE = #{STAFF_CODE},
+			STAFF_NAME = #{STAFF_NAME},
+			DEPART_CODE = #{DEPART_CODE},
+			UNITS_DEPART = #{UNITS_DEPART},
+			STAFF_POSITION = #{STAFF_POSITION},
+			STAFF_JOB = #{STAFF_JOB},
+			STAFF_MODULE = #{STAFF_MODULE},
+			PHONE = #{PHONE},
+			MAIL = #{MAIL},
+			APPLY_DATE = #{APPLY_DATE},
+			CANCEL_DATE = #{CANCEL_DATE},
+			APPLY_TEMP_REASON = #{APPLY_TEMP_REASON},
+			UKEY_NUM = #{UKEY_NUM},
+			NOTE = #{NOTE}
+		where 
+			ID = #{ID}
+	</update>
+
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			ID,
+			STAFF_CODE,	
+			STAFF_NAME,	
+			DEPART_CODE,	
+			UNITS_DEPART,	
+			STAFF_POSITION,	
+			STAFF_JOB,	
+			STAFF_MODULE,	
+			PHONE,	
+			MAIL,	
+			APPLY_DATE,	
+			CANCEL_DATE,	
+			APPLY_TEMP_REASON,	
+			UKEY_NUM,	
+			NOTE,
+			CONFIRM_STATE
+		from 
+		<include refid="tableName"></include>
+		where STATE=1
+		<if test="pd.SelectedDepartCode != null and pd.SelectedDepartCode != ''">
+		and 
+			USER_DEPART = #{pd.SelectedDepartCode}
+		</if>
+		
+		<if test="pd.confirmState != null and pd.confirmState != ''">
+		and 
+			CONFIRM_STATE IN (${pd.confirmState})
+		</if>
+		<if test="pd.busiDate != null and pd.busiDate != ''">
+		and 
+			BUSI_DATE = #{pd.busiDate}
+		</if>
+		<if test="pd.USER_DEPART != null and pd.USER_DEPART != ''">
+		and 
+			USER_DEPART = #{pd.USER_DEPART}
+		</if>
+		order by
+			CONFIRM_STATE ASC
+	</select>
+	
+	<!--业务期间集合  -->
+	<select id="listBusiDate" parameterType="pd" resultType="pd">
+		select BUSI_DATE from  <include refid="tableName"></include> group by BUSI_DATE
+	</select>
+	
+	<!-- 批量删除 -->
+	<update id="deleteAll" parameterType="String">
+		update
+			<include refid="tableName"></include>
+		set
+			STATE = 0
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+	
+	<!-- 批量审批/驳回 -->
+	<update id="editReportState" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set
+			CONFIRM_STATE = #{CONFIRM_STATE}
+		where 
+			ID in
+		<foreach item="item" index="index" collection="arrayDATA_IDS" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+	
+		<!-- *********************导入导出********************************* -->
+	<!-- 导出列表 -->
+	<select id="exportList" parameterType="Page" resultType="pd">
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where
+			STATE = 1
+		and 
+			CONFIRM_STATE = #{pd.confirmState}
+		<if test="pd.BUSI_DATE!= null and pd.BUSI_DATE!= ''">
+			and BUSI_DATE = #{pd.BUSI_DATE}
+		</if>
+		<if test="pd.USER_DEPART!= null and pd.USER_DEPART!= ''">
+			and USER_DEPART = #{pd.USER_DEPART}
+		</if>
+		order by 
+			CONFIRM_STATE ASC
+	</select>
+	
+	<!-- 更新数据 -->
+	<update id="delAndIns" parameterType="pd">
+		<foreach item="item" index="index" collection="list" open=" " separator=" " close=" ">
+		    delete from 
+		    	<include refid="tableName"></include>
+		    where 
+		    	ID = #{item.ID};
+	        insert into 
+	        	<include refid="tableName"></include>
+		    (
+					<include refid="Field"></include>
+			) value (
+					#{item.BUSI_DATE},
+					#{item.STAFF_CODE},	
+					#{item.STAFF_NAME},	
+					#{item.DEPART_CODE},	
+					#{item.UNITS_DEPART},	
+					#{item.STAFF_POSITION},	
+					#{item.STAFF_JOB},	
+					#{item.STAFF_MODULE},	
+					#{item.PHONE},	
+					#{item.MAIL},	
+					#{item.APPLY_DATE},	
+					#{item.CANCEL_DATE},	
+					#{item.APPLY_TEMP_REASON},	
+					#{item.UKEY_NUM},	
+					#{item.NOTE},	
+					#{item.CONFIRM_STATE},	
+					#{item.STATE},
+					#{item.BILL_USER},
+					#{item.USER_DEPART},
+					#{item.BILL_DATE}
+			);
+		</foreach>
+	</update>
+	
+	<!-- 导出模板 -->
+	<select id="exportModel" parameterType="pd" resultType="pd">
+		select 
+			<include refid="Field"></include> 
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1 
+		limit 1
+	</select>
+</mapper>

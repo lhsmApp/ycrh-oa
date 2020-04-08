@@ -1,0 +1,1301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ApprovalConfigMapper">
+	
+	<!--表名 -->
+	<sql id="tableNameBusiness">
+		TB_APPROVAL_BUSINESS_CONFIG
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="FieldBusiness">
+		BUSINESS_CODE,	
+		BUSINESS_NAME,	
+		NOTE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldBusinessValue">
+		#{BUSINESS_CODE},	
+		#{BUSINESS_NAME},	
+		#{NOTE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="saveBusiness" parameterType="pd">
+		insert into 
+	<include refid="tableNameBusiness"></include>
+		(
+	<include refid="FieldBusiness"></include>
+		) values (
+	<include refid="FieldBusinessValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deleteBusiness" parameterType="pd">
+		delete from
+		<include refid="tableNameBusiness"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="editBusiness" parameterType="pd">
+		update
+		<include refid="tableNameBusiness"></include>
+		set 
+			BUSINESS_CODE = #{BUSINESS_CODE},
+			BUSINESS_NAME = #{BUSINESS_NAME},
+			NOTE = #{NOTE}
+		where 
+		BUSINESS_CODE = #{BUSINESS_CODE}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findByIdBusiness" parameterType="pd" resultType="pd">
+		select 
+		<include refid="FieldBusiness"></include>
+		from 
+		<include refid="tableNameBusiness"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPageBusiness" parameterType="page" resultType="pd">
+		select
+		<include refid="FieldBusiness"></include>
+		from 
+		<include refid="tableNameBusiness"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAllBusiness" parameterType="pd" resultType="pd">
+		select
+		<include refid="FieldBusiness"></include>
+		from 
+		<include refid="tableNameBusiness"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAllBusiness" parameterType="String">
+		delete from
+		<include refid="tableNameBusiness"></include>
+		where 
+			BUSINESS_CODE in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	
+	<!--表名 -->
+	<sql id="tableNameDetail">
+		TB_APPROVAL_DETAIL
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="FieldDetail">
+		BUSINESS_CODE,	
+		BILL_CODE,	
+		CURRENT_LEVEL,	
+		NEXT_LEVEL,	
+		ACTIVE_FLAG,	
+		UNIT_CODE,	
+		DEPART_CODE,	
+		APPROVAL_STATE,	
+		ROLE_CODE,	
+		APPROVAL_USER,	
+		APPROVAL_DATE,	
+		APPROVAL_ADVICE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldDetailValue">
+		#{BUSINESS_CODE},	
+		#{BILL_CODE},	
+		#{CURRENT_LEVEL},	
+		#{NEXT_LEVEL},	
+		#{ACTIVE_FLAG},	
+		#{UNIT_CODE},	
+		#{DEPART_CODE},	
+		#{APPROVAL_STATE},	
+		#{ROLE_CODE},	
+		#{APPROVAL_USER},	
+		#{APPROVAL_DATE},	
+		#{APPROVAL_ADVICE}
+	</sql>
+	
+	
+	<!-- 新增-->
+	<insert id="saveDetail" parameterType="pd">
+		insert into 
+	<include refid="tableNameDetail"></include>
+		(
+	<include refid="FieldDetail"></include>
+		) values (
+	<include refid="FieldDetailValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deleteDetail" parameterType="pd">
+		delete from
+		<include refid="tableNameDetail"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</delete>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findByIdDetail" parameterType="pd" resultType="pd">
+		select 
+		<include refid="FieldDetail"></include>
+		from 
+		<include refid="tableNameDetail"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPageDetail" parameterType="page" resultType="pd">
+		select
+		<include refid="FieldDetail"></include>
+		from 
+		<include refid="tableNameDetail"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAllDetail" parameterType="pd" resultType="pd">
+		select
+		<include refid="FieldDetail"></include>
+		from 
+		<include refid="tableNameDetail"></include>
+	</select>
+	
+
+
+	<!-- 批量删除 -->
+	<delete id="deleteAllDetail" parameterType="String">
+		delete from
+		<include refid="tableNameDetail"></include>
+		where 
+			BUSINESS_CODE in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	
+	
+	<!--表名 -->
+	<sql id="tableNameLevel">
+		TB_APPROVAL_LEVEL_CONFIG
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="FieldLevel">
+		SCHEME_CODE,	
+		APPROVAL_LEVEL,	
+		UNIT_CODE,	
+		DEPART_CODE,	
+		ROLE_CODE,	
+		NOTE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldLevelValue">
+		#{SCHEME_CODE},	
+		#{APPROVAL_LEVEL},	
+		#{UNIT_CODE},	
+		#{DEPART_CODE},	
+		#{ROLE_CODE},	
+		#{NOTE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="saveLevel" parameterType="pd">
+		insert into 
+	<include refid="tableNameLevel"></include>
+		(
+	<include refid="FieldLevel"></include>
+		) values (
+	<include refid="FieldLevelValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deleteLevel" parameterType="pd">
+		delete from
+		<include refid="tableNameLevel"></include>
+		where 
+			SCHEME_CODE = #{SCHEME_CODE}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="editLevel" parameterType="pd">
+		update
+		<include refid="tableNameLevel"></include>
+		set 
+			SCHEME_CODE = #{SCHEME_CODE},
+			APPROVAL_LEVEL = #{APPROVAL_LEVEL},
+			UNIT_CODE = #{UNIT_CODE},
+			DEPART_CODE = #{DEPART_CODE},
+			ROLE_CODE = #{ROLE_CODE},
+			NOTE = #{NOTE}
+		where 
+		SCHEME_CODE = #{SCHEME_CODE}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findByIdLevel" parameterType="pd" resultType="pd">
+		select 
+		<include refid="FieldLevel"></include>
+		from 
+		<include refid="tableNameLevel"></include>
+		where 
+			SCHEME_CODE = #{SCHEME_CODE}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPageLevel" parameterType="page" resultType="pd">
+		select
+		<include refid="FieldLevel"></include>
+		from 
+		<include refid="tableNameLevel"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAllLevel" parameterType="pd" resultType="pd">
+		select
+		<include refid="FieldLevel"></include>
+		from 
+		<include refid="tableNameLevel"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAllLevel" parameterType="String">
+		delete from
+		<include refid="tableNameLevel"></include>
+		where 
+			SCHEME_CODE in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	
+	<!--表名 -->
+	<sql id="tableNameMain">
+		TB_APPROVAL_MAIN
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="FieldMain">
+		BUSINESS_CODE,	
+		BILL_CODE,	
+		APPLY_USER,	
+		APPLY_DATE,	
+		APPROVAL_STATE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldMainValue">
+		#{BUSINESS_CODE},	
+		#{BILL_CODE},	
+		#{APPLY_USER},	
+		#{APPLY_DATE},	
+		#{APPROVAL_STATE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="saveMain" parameterType="pd">
+		insert into 
+	<include refid="tableNameMain"></include>
+		(
+	<include refid="FieldMain"></include>
+		) values (
+	<include refid="FieldMainValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deleteMain" parameterType="pd">
+		delete from
+		<include refid="tableNameMain"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="editMain" parameterType="pd">
+		update
+		<include refid="tableNameMain"></include>
+		set 
+			BUSINESS_CODE = #{BUSINESS_CODE},
+			BILL_CODE = #{BILL_CODE},
+			APPLY_USER = #{APPLY_USER},
+			APPLY_DATE = #{APPLY_DATE},
+			APPROVAL_STATE = #{APPROVAL_STATE}
+		where 
+		BUSINESS_CODE = #{BUSINESS_CODE}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findByIdMain" parameterType="pd" resultType="pd">
+		select 
+		<include refid="FieldMain"></include>
+		from 
+		<include refid="tableNameMain"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</select>
+	<!-- 列表 -->
+	<select id="datalistPageMain" parameterType="page" resultType="pd">
+		select
+		<include refid="FieldMain"></include>
+		from 
+		<include refid="tableNameMain"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAllMain" parameterType="pd" resultType="pd">
+		select
+		<include refid="FieldMain"></include>
+		from 
+		<include refid="tableNameMain"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAllMain" parameterType="String">
+		delete from
+		<include refid="tableNameMain"></include>
+		where 
+			BUSINESS_CODE in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	
+	
+	
+	<!--表名 -->
+	<sql id="tableNameScheme">
+		TB_APPROVAL_SCHEME_CONFIG
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="FieldScheme">
+		BUSINESS_CODE,	
+		SCHEME_CODE,	
+		UNIT_CODE,	
+		DEPART_CODE,	
+		NOTE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldSchemeValue">
+		#{BUSINESS_CODE},	
+		#{SCHEME_CODE},	
+		#{UNIT_CODE},	
+		#{DEPART_CODE},	
+		#{NOTE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="saveScheme" parameterType="pd">
+		insert into 
+	<include refid="tableNameScheme"></include>
+		(
+	<include refid="FieldScheme"></include>
+		) values (
+	<include refid="FieldSchemeValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deleteScheme" parameterType="pd">
+		delete from
+		<include refid="tableNameScheme"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="editScheme" parameterType="pd">
+		update
+		<include refid="tableNameScheme"></include>
+		set 
+			BUSINESS_CODE = #{BUSINESS_CODE},
+			SCHEME_CODE = #{SCHEME_CODE},
+			UNIT_CODE = #{UNIT_CODE},
+			DEPART_CODE = #{DEPART_CODE},
+			NOTE = #{NOTE}
+		where 
+		BUSINESS_CODE = #{BUSINESS_CODE}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findByIdScheme" parameterType="pd" resultType="pd">
+		select 
+		<include refid="FieldScheme"></include>
+		from 
+		<include refid="tableNameScheme"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+	</select>
+		<!-- 通过业务编码、单位和部门获取数据 -->
+	<select id="findByIdSchemeUnit" parameterType="pd" resultType="pd">
+		select 
+		<include refid="FieldScheme"></include>
+		from 
+		<include refid="tableNameScheme"></include>
+		where 
+			BUSINESS_CODE = #{BUSINESS_CODE}
+			AND
+			UNIT_CODE = #{UNIT_CODE}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPageScheme" parameterType="page" resultType="pd">
+	SELECT t.*,
+			c.NAME AS UNIT_NAME,
+			d.USERNAME,
+			e.NAME  DEPT_NAME,
+			g.APPROVAL_STATE
+		 FROM	
+		(SELECT 
+			a.BUSINESS_CODE,	
+			a.BILL_CODE,	
+			a.CURRENT_LEVEL,	
+			a.NEXT_LEVEL,	
+			a.ACTIVE_FLAG,	
+			a.UNIT_CODE AS SPUNIT_CODE,	
+			a.DEPART_CODE,	
+			a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,	
+			a.APPROVAL_USER,	
+			a.APPROVAL_DATE,	
+			a.APPROVAL_ADVICE,	
+			b.UNIT_CODE AS UNIT_CODE,	
+			b.DEPT_CODE,	
+			b.ENTRY_DATE,	
+			b.SERIAL_NUM,	
+			b.USER_CODE,	
+			b.USER_DEPT,	
+			b.USER_JOB,	
+			b.USER_CONTACT,	
+			b.BG_NAME,	
+			b.SYSTEM,	
+			b.BG_TYPE,	
+			b.BG_REASON,	
+			b.BILL_STATE,	
+			b.BILL_USER,	
+			b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_erp_xtbg b 
+		WHERE 
+<!-- 		 	  a.ACTIVE_FLAG =#{pd.ACTIVE_FLAG} -->
+			  a.UNIT_CODE = #{pd.UNIT_CODE}
+			  AND a.ROLE_CODE = #{pd.ROLE_CODE}
+			   <if test="pd.ACTIVE_FLAG!=null and pd.ACTIVE_FLAG!=''"> 
+			 and a.ACTIVE_FLAG =#{pd.ACTIVE_FLAG}
+			 </if>
+			<if test="pd.APPROVAL_STATE!=null and pd.APPROVAL_STATE!=''"> 
+			 and a.APPROVAL_STATE = #{pd.APPROVAL_STATE}
+			 </if>
+<!-- 			  AND a.APPROVAL_STATE = #{pd.APPROVAL_STATE} -->
+			AND a.BILL_CODE = b.BILL_CODE ) AS T
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			  LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON e.DEPARTMENT_CODE = t.DEPT_CODE			  			
+		WHERE 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and  t.BG_NAME LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+		</if>
+	</select>
+	<!-- 角色变更-->
+	<select id="datalistPageJsbg" parameterType="page" resultType="pd">
+			SELECT t.*,
+			c.NAME AS UNIT_NAME,
+			d.USERNAME,
+			e.NAME  DEPT_NAME,
+			g.APPROVAL_STATE
+		 FROM	
+		(SELECT 
+			a.BUSINESS_CODE,	
+			a.BILL_CODE,	
+			a.CURRENT_LEVEL,	
+			a.NEXT_LEVEL,	
+			a.ACTIVE_FLAG,	
+			a.UNIT_CODE AS SPUNIT_CODE,	
+			a.DEPART_CODE,	
+			a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,	
+			a.APPROVAL_USER,	
+			a.APPROVAL_DATE,	
+			a.APPROVAL_ADVICE,	
+			b.UNIT_CODE AS UNIT_CODE,	
+			b.DEPT_CODE,	
+			b.ENTRY_DATE,	
+			b.SERIAL_NUM,	
+			b.USER_CODE,	
+			b.USER_DEPT,	
+			b.USER_JOB,	
+			b.USER_CONTACT,	
+			b.BG_NAME,	
+			b.SYSTEM,	
+			b.BG_TYPE,	
+			b.BG_REASON,	
+			b.BILL_STATE,	
+			b.BILL_USER,	
+			b.BILL_DATE,
+			b.ADD_ROLE,
+			b.DEL_ROLE
+		FROM
+			  tb_approval_detail a, tb_change_erp_jsbg b 
+		WHERE a.ACTIVE_FLAG =#{pd.ACTIVE_FLAG}
+			  AND a.UNIT_CODE = #{pd.UNIT_CODE}
+			  AND a.ROLE_CODE = #{pd.ROLE_CODE}
+			  AND a.APPROVAL_STATE = #{pd.APPROVAL_STATE}
+			AND a.BILL_CODE = b.BILL_CODE ) AS T
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			  LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON e.DEPARTMENT_CODE = t.DEPT_CODE	
+		WHERE 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and  t.BG_NAME LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+		</if>
+	</select>
+	<!-- GRC帐号新增 -->
+	<select id="datalistPageGrcZhxz" parameterType="page" resultType="pd">
+		SELECT t.*,
+			c.NAME AS UNIT_NAME,
+			d.USERNAME,
+			e.NAME  DEPT_NAME,
+			g.APPROVAL_STATE
+		FROM	(SELECT 
+			a.BUSINESS_CODE,	
+			a.BILL_CODE,	
+			a.CURRENT_LEVEL,	
+			a.NEXT_LEVEL,	
+			a.ACTIVE_FLAG,	
+			a.UNIT_CODE AS SPUNIT_CODE,	
+			a.DEPART_CODE,	
+			a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,	
+			a.APPROVAL_USER,	
+			a.APPROVAL_DATE,	
+			a.APPROVAL_ADVICE,	
+			b.UNIT_CODE AS UNIT_CODE,	
+			b.DEPT_CODE,	
+			b.ENTRY_DATE,	
+			b.SERIAL_NUM,	
+			b.USER_CODE,	
+			b.USER_DEPT,	
+			b.USER_JOB,	
+			b.USER_CONTACT,	
+			b.EFFECTIVE_DATE,	
+			b.SYSTEM,	
+			b.ACCOUNT_NEW,
+			b.ACCOUNT_VALIDITY,
+			b.ACCOUNT_REASON,
+			b.ACCOUNT_ROLES,
+			b.BILL_STATE,	
+			b.BILL_USER,	
+			b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_grc_zhxz b 
+		WHERE a.ACTIVE_FLAG =#{pd.ACTIVE_FLAG}
+			  AND a.UNIT_CODE = #{pd.UNIT_CODE}
+			  AND a.ROLE_CODE = #{pd.ROLE_CODE}
+			  AND a.APPROVAL_STATE = #{pd.APPROVAL_STATE}
+			AND a.BILL_CODE = b.BILL_CODE ) AS t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			  LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON e.DEPARTMENT_CODE = t.DEPT_CODE
+		WHERE 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and  t.ACCOUNT_REASON LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+		</if>
+	</select>
+		<!-- GRC帐号注销 -->
+	<select id="datalistPageGrcZhzx" parameterType="page" resultType="pd">
+		SELECT t.*,
+			c.NAME AS UNIT_NAME,
+			d.USERNAME,
+			e.NAME  DEPT_NAME,
+			g.APPROVAL_STATE 
+		FROM	
+			(SELECT 
+			a.BUSINESS_CODE,	
+			a.BILL_CODE,	
+			a.CURRENT_LEVEL,	
+			a.NEXT_LEVEL,	
+			a.ACTIVE_FLAG,	
+			a.UNIT_CODE AS SPUNIT_CODE,	
+			a.DEPART_CODE,	
+			a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,	
+			a.APPROVAL_USER,	
+			a.APPROVAL_DATE,	
+			a.APPROVAL_ADVICE,	
+			b.UNIT_CODE,	
+			b.DEPT_CODE,	
+			b.ENTRY_DATE,	
+			b.SERIAL_NUM,	
+			b.USER_CODE,	
+			b.USER_DEPT,	
+			b.USER_JOB,	
+			b.USER_CONTACT,	
+			b.EFFECTIVE_DATE,	
+			b.SYSTEM,	
+			b.ACCOUNT_NAME,
+			b.CANCLE_REASON,
+			b.BILL_STATE,	
+			b.BILL_USER,	
+			b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_grc_zhzx b 
+		WHERE a.ACTIVE_FLAG =#{pd.ACTIVE_FLAG}
+			  AND a.UNIT_CODE = #{pd.UNIT_CODE}
+			  AND a.ROLE_CODE = #{pd.ROLE_CODE}
+			  AND a.APPROVAL_STATE = #{pd.APPROVAL_STATE}
+			AND a.BILL_CODE = b.BILL_CODE ) AS t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			 LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON e.DEPARTMENT_CODE = t.DEPT_CODE	
+		WHERE 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and t.CANCLE_REASON LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+		</if>
+	</select>
+		<!-- GRC帐号注销 -->
+	<select id="datalistPageGrcQxbg" parameterType="page" resultType="pd">
+		SELECT t.*,
+			c.NAME AS UNIT_NAME,
+			d.USERNAME,
+			e.NAME  DEPT_NAME,
+			g.APPROVAL_STATE
+		FROM (SELECT 
+			a.BUSINESS_CODE,	
+			a.BILL_CODE,	
+			a.CURRENT_LEVEL,	
+			a.NEXT_LEVEL,	
+			a.ACTIVE_FLAG,	
+			a.UNIT_CODE AS SPUNIT_CODE,	
+			a.DEPART_CODE,	
+			a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,	
+			a.APPROVAL_USER,	
+			a.APPROVAL_DATE,	
+			a.APPROVAL_ADVICE,	
+			b.UNIT_CODE,	
+			b.DEPT_CODE,	
+			b.ENTRY_DATE,	
+			b.SERIAL_NUM,	
+			b.USER_CODE,	
+			b.USER_DEPT,	
+			b.USER_JOB,	
+			b.USER_CONTACT,	
+			b.EFFECTIVE_DATE,	
+			b.SYSTEM,	
+			b.BG_REASON,
+			b.ADD_ROLES,
+			b.DELETE_ROLES,
+			b.BILL_STATE,	
+			b.BILL_USER,	
+			b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_grc_qxbg b 
+		WHERE a.ACTIVE_FLAG =#{pd.ACTIVE_FLAG}
+			  AND a.UNIT_CODE = #{pd.UNIT_CODE}
+			  AND a.ROLE_CODE = #{pd.ROLE_CODE}
+			  AND a.APPROVAL_STATE = #{pd.APPROVAL_STATE}
+			AND a.BILL_CODE = b.BILL_CODE ) AS t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			 LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON e.DEPARTMENT_CODE = t.DEPT_CODE	
+		WHERE 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and  t.BG_REASON LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+		</if>
+	</select>
+	<!-- 列表(全部) -->
+	<select id="listAllScheme" parameterType="pd" resultType="pd">
+		select
+		<include refid="FieldScheme"></include>
+		from 
+		<include refid="tableNameScheme"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAllScheme" parameterType="String">
+		delete from
+		<include refid="tableNameScheme"></include>
+		where 
+			BUSINESS_CODE in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	<!-- 显示当前需要审批的订单 -->
+	<select id="listApproval" parameterType="pd" resultType="pd">
+		SELECT t.*,	
+				c.NAME AS UNIT_NAME,
+				d.USERNAME,
+				e.NAME  DEPT_NAME,
+				f.NAME  USER_DEPTNAME,
+				g.APPROVAL_STATE
+				from 
+		(SELECT 
+			a.BUSINESS_CODE,a.BILL_CODE,a.CURRENT_LEVEL,a.NEXT_LEVEL,a.ACTIVE_FLAG,a.UNIT_CODE AS SPUNIT_CODE,a.DEPART_CODE,a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,a.APPROVAL_USER,a.APPROVAL_DATE,a.APPROVAL_ADVICE,b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+			b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,b.BG_NAME,b.SYSTEM,b.BG_TYPE,b.BG_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_erp_xtbg b
+			    <where>
+			  a.BILL_CODE = b.BILL_CODE 
+			 <if test="ACTIVE_FLAG!=null and ACTIVE_FLAG!=''"> 
+			 and a.ACTIVE_FLAG =#{ACTIVE_FLAG}
+			 </if>
+		 	<if test="UNIT_CODE!=null and UNIT_CODE!=''"> 
+			 and a.UNIT_CODE = #{UNIT_CODE}
+			 </if>
+			<if test="ROLE_CODE!=null and ROLE_CODE!=''"> 
+			 and a.ROLE_CODE = #{ROLE_CODE}
+			 </if>
+			<if test="APPROVAL_STATE!=null and APPROVAL_STATE!=''"> 
+			 and a.APPROVAL_STATE = #{APPROVAL_STATE}
+			 </if>
+			</where>) as t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			 LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON
+			e.DEPARTMENT_CODE = t.DEPT_CODE	
+			  left join oa_department f
+			  on
+			f.DEPARTMENT_CODE = t.USER_DEPT
+			
+			UNION
+			SELECT t.*,	
+			c.NAME AS UNIT_NAME,
+			d.USERNAME,
+			e.NAME  DEPT_NAME,
+			f.NAME  USER_DEPTNAME,
+			g.APPROVAL_STATE 
+			from 
+			(SELECT 
+				a.BUSINESS_CODE,a.BILL_CODE,a.CURRENT_LEVEL,a.NEXT_LEVEL,a.ACTIVE_FLAG,a.UNIT_CODE AS SPUNIT_CODE,a.DEPART_CODE,a.APPROVAL_STATE as SP_STATE,	
+				a.ROLE_CODE,a.APPROVAL_USER,a.APPROVAL_DATE,a.APPROVAL_ADVICE,b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+				b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,b.BG_NAME,b.SYSTEM,b.BG_TYPE,b.BG_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+			FROM
+			  tb_approval_detail a, tb_change_erp_jsbg b
+			  <where>
+			  a.BILL_CODE = b.BILL_CODE 
+			 <if test="ACTIVE_FLAG!=null and ACTIVE_FLAG!=''"> 
+			 and a.ACTIVE_FLAG =#{ACTIVE_FLAG}
+			 </if>
+		 	<if test="UNIT_CODE!=null and UNIT_CODE!=''"> 
+			 and a.UNIT_CODE = #{UNIT_CODE}
+			 </if>
+			<if test="ROLE_CODE!=null and ROLE_CODE!=''"> 
+			 and a.ROLE_CODE = #{ROLE_CODE}
+			 </if>
+			<if test="APPROVAL_STATE!=null and APPROVAL_STATE!=''"> 
+			 and a.APPROVAL_STATE = #{APPROVAL_STATE}
+			 </if>
+			</where>) as t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			   LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON
+			e.DEPARTMENT_CODE = t.DEPT_CODE	
+			  left join oa_department f
+			  on
+			f.DEPARTMENT_CODE = t.USER_DEPT 
+			  
+				UNION
+				SELECT t.*,	
+				c.NAME AS UNIT_NAME,
+				d.USERNAME,
+				e.NAME  DEPT_NAME,
+				f.NAME  USER_DEPTNAME,
+				g.APPROVAL_STATE
+				from 
+		(SELECT 
+			a.BUSINESS_CODE,a.BILL_CODE,a.CURRENT_LEVEL,a.NEXT_LEVEL,a.ACTIVE_FLAG,a.UNIT_CODE AS SPUNIT_CODE,a.DEPART_CODE,a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,a.APPROVAL_USER,a.APPROVAL_DATE,a.APPROVAL_ADVICE,b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+			b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,'' as BG_NAME,b.SYSTEM,b.BG_TYPE,b.BG_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_grc_qxbg b 
+			   <where>
+			  a.BILL_CODE = b.BILL_CODE 
+			 <if test="ACTIVE_FLAG!=null and ACTIVE_FLAG!=''"> 
+			 and a.ACTIVE_FLAG =#{ACTIVE_FLAG}
+			 </if>
+		 	<if test="UNIT_CODE!=null and UNIT_CODE!=''"> 
+			 and a.UNIT_CODE = #{UNIT_CODE}
+			 </if>
+			<if test="ROLE_CODE!=null and ROLE_CODE!=''"> 
+			 and a.ROLE_CODE = #{ROLE_CODE}
+			 </if>
+			<if test="APPROVAL_STATE!=null and APPROVAL_STATE!=''"> 
+			 and a.APPROVAL_STATE = #{APPROVAL_STATE}
+			 </if>
+			</where>) as t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			   LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON
+			e.DEPARTMENT_CODE = t.DEPT_CODE	
+			  left join oa_department f
+			  on
+			f.DEPARTMENT_CODE = t.USER_DEPT
+			 
+				UNION
+				SELECT t.*,	
+				c.NAME AS UNIT_NAME,
+				d.USERNAME,
+				e.NAME  DEPT_NAME,
+				f.NAME  USER_DEPTNAME,
+				g.APPROVAL_STATE 
+				from 
+		(SELECT 
+			a.BUSINESS_CODE,a.BILL_CODE,a.CURRENT_LEVEL,a.NEXT_LEVEL,a.ACTIVE_FLAG,a.UNIT_CODE AS SPUNIT_CODE,a.DEPART_CODE,a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,a.APPROVAL_USER,a.APPROVAL_DATE,a.APPROVAL_ADVICE,b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+			b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,'' as BG_NAME,b.SYSTEM,'' as BG_TYPE,b.ACCOUNT_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_grc_zhxz b 
+			  <where>
+			  a.BILL_CODE = b.BILL_CODE 
+			 <if test="ACTIVE_FLAG!=null and ACTIVE_FLAG!=''"> 
+			 and a.ACTIVE_FLAG =#{ACTIVE_FLAG}
+			 </if>
+		 	<if test="UNIT_CODE!=null and UNIT_CODE!=''"> 
+			 and a.UNIT_CODE = #{UNIT_CODE}
+			 </if>
+			<if test="ROLE_CODE!=null and ROLE_CODE!=''"> 
+			 and a.ROLE_CODE = #{ROLE_CODE}
+			 </if>
+			<if test="APPROVAL_STATE!=null and APPROVAL_STATE!=''"> 
+			 and a.APPROVAL_STATE = #{APPROVAL_STATE}
+			 </if>
+			</where>) as t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			   LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON
+			e.DEPARTMENT_CODE = t.DEPT_CODE	
+			  left join oa_department f
+			  on
+			f.DEPARTMENT_CODE = t.USER_DEPT
+			  
+					UNION
+				SELECT t.*,	
+				c.NAME AS UNIT_NAME,
+				d.USERNAME,
+				e.NAME  DEPT_NAME,
+				f.NAME  USER_DEPTNAME,
+				g.APPROVAL_STATE 
+				from 
+		(SELECT 
+			a.BUSINESS_CODE,a.BILL_CODE,a.CURRENT_LEVEL,a.NEXT_LEVEL,a.ACTIVE_FLAG,a.UNIT_CODE AS SPUNIT_CODE,a.DEPART_CODE,a.APPROVAL_STATE as SP_STATE,	
+			a.ROLE_CODE,a.APPROVAL_USER,a.APPROVAL_DATE,a.APPROVAL_ADVICE,b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+			b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,'' as BG_NAME,b.SYSTEM,'' as BG_TYPE,b.CANCLE_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+		FROM
+			  tb_approval_detail a, tb_change_grc_zhzx b
+			    <where>
+			  a.BILL_CODE = b.BILL_CODE 
+			 <if test="ACTIVE_FLAG!=null and ACTIVE_FLAG!=''"> 
+			 and a.ACTIVE_FLAG =#{ACTIVE_FLAG}
+			 </if>
+		 	<if test="UNIT_CODE!=null and UNIT_CODE!=''"> 
+			 and a.UNIT_CODE = #{UNIT_CODE}
+			 </if>
+			<if test="ROLE_CODE!=null and ROLE_CODE!=''"> 
+			 and a.ROLE_CODE = #{ROLE_CODE}
+			 </if>
+			<if test="APPROVAL_STATE!=null and APPROVAL_STATE!=''"> 
+			 and a.APPROVAL_STATE = #{APPROVAL_STATE}
+			 </if>
+			</where> ) as t
+			LEFT JOIN tb_approval_main g
+			ON 
+			g.BILL_CODE=t.BILL_CODE	
+			   LEFT JOIN oa_department c
+		 	 ON
+			c.DEPARTMENT_CODE = t.UNIT_CODE
+			LEFT JOIN sys_user d 
+			ON d.USER_ID=t.USER_CODE
+			LEFT JOIN oa_department e
+			  ON
+			e.DEPARTMENT_CODE = t.DEPT_CODE	
+			  left join oa_department f
+			  on
+			f.DEPARTMENT_CODE = t.USER_DEPT
+			
+	</select>
+	
+	<!-- 查询变更信息 -->
+	<select id="queryApproval" parameterType="pd" resultType="pd">
+		SELECT A.*,
+			B.BUSINESS_CODE,B.BILL_CODE,B.CURRENT_LEVEL,B.NEXT_LEVEL,B.ACTIVE_FLAG,B.UNIT_CODE AS SPUNIT_CODE,B.DEPART_CODE,B.APPROVAL_STATE,	
+			B.ROLE_CODE,B.APPROVAL_USER,B.APPROVAL_DATE,B.APPROVAL_ADVICE 
+		FROM (
+			SELECT b.BILL_CODE,
+				b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+				b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,b.BG_NAME,b.SYSTEM,b.BG_TYPE,b.BG_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+			FROM
+				tb_change_erp_xtbg b 
+			<where>
+				<if test="START_DATE!=null and START_DATE!=''"> 
+				 	and ENTRY_DATE >= #{START_DATE}
+				</if>
+				<if test="END_DATE!=null and END_DATE!=''"> 
+				 	and ENTRY_DATE &lt;= #{END_DATE}
+				</if>
+			</where>
+			UNION
+			SELECT b.BILL_CODE,
+				b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+				b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,b.BG_NAME,b.SYSTEM,b.BG_TYPE,b.BG_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+			FROM
+				tb_change_erp_jsbg b 
+		    <where>
+				<if test="START_DATE!=null and START_DATE!=''"> 
+				 	and ENTRY_DATE >= #{START_DATE}
+				</if>
+				<if test="END_DATE!=null and END_DATE!=''"> 
+				 	and ENTRY_DATE &lt;= #{END_DATE}
+				</if>
+			</where>
+			UNION
+			SELECT b.BILL_CODE,
+				b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+				b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,'' as BG_NAME,b.SYSTEM,b.BG_TYPE,b.BG_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+			FROM
+				tb_change_grc_qxbg b 
+			<where>
+				<if test="START_DATE!=null and START_DATE!=''"> 
+				 	and ENTRY_DATE >= #{START_DATE}
+				</if>
+				<if test="END_DATE!=null and END_DATE!=''"> 
+				 	and ENTRY_DATE &lt;= #{END_DATE}
+				</if>
+			</where>
+			UNION
+			SELECT b.BILL_CODE,
+				b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+				b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,'' as BG_NAME,b.SYSTEM,'' as BG_TYPE,b.ACCOUNT_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+			FROM
+				tb_change_grc_zhxz b 
+		    <where>
+		    	<if test="START_DATE!=null and START_DATE!=''"> 
+				 	and ENTRY_DATE >= #{START_DATE}
+				</if>
+				<if test="END_DATE!=null and END_DATE!=''"> 
+				 	and ENTRY_DATE &lt;= #{END_DATE}
+				</if>
+			</where>
+			UNION
+			SELECT b.BILL_CODE,
+				b.UNIT_CODE AS UNIT_CODE,b.DEPT_CODE,b.ENTRY_DATE,	
+				b.SERIAL_NUM,b.USER_CODE,b.USER_DEPT,b.USER_JOB,b.USER_CONTACT,'' as BG_NAME,b.SYSTEM,'' as BG_TYPE,b.CANCLE_REASON as REASON,b.BILL_STATE,b.BILL_USER,b.BILL_DATE
+			FROM
+				tb_change_grc_zhzx b 
+		    <where>
+		    	<if test="START_DATE!=null and START_DATE!=''"> 
+				 	and ENTRY_DATE >= #{START_DATE}
+				</if>
+				<if test="END_DATE!=null and END_DATE!=''"> 
+				 	and ENTRY_DATE &lt;= #{END_DATE}
+				</if>
+		    	
+			</where>
+		) A
+		<!-- 如果包含未上报数据，用left join，否则用join -->
+		<!-- left join -->
+		join 
+		tb_approval_detail B
+		on A.BILL_CODE=B.BILL_CODE
+		<where>
+			<!-- 只能查自己审批过的单据 -->
+			<if test="APPROVAL_USER!=null and APPROVAL_USER!=''"> 
+			 	and B.APPROVAL_USER = #{APPROVAL_USER}
+			</if>
+			
+			<!-- 其它界面查询条件 -->
+			<if test="keywords!=null and keywords!=''"> 
+			 	and (
+					A.BILL_CODE LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					or
+					A.BG_NAME LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+				)
+			 </if>
+			 <if test="BUSINESS_CODE!=null and BUSINESS_CODE!=''"> 
+			 	and B.BUSINESS_CODE = #{BUSINESS_CODE}
+			 </if>
+			 <if test="START_DATE!=null and START_DATE!=''"> 
+			 	and A.ENTRY_DATE >= #{START_DATE}
+			 </if>
+			 <if test="END_DATE!=null and END_DATE!=''"> 
+			 	and A.ENTRY_DATE &lt;= #{END_DATE}
+			 </if>
+			 <if test="APPROVAL_STATE!=null and APPROVAL_STATE!=''"> 
+			 	and B.APPROVAL_STATE = #{APPROVAL_STATE}
+			 </if>
+		</where>
+	</select>
+	
+	<!-- 系统变更上报-->
+	<insert id="save" parameterType="pd">
+		insert into TB_APPROVAL_MAIN
+		(BUSINESS_CODE,BILL_CODE,APPLY_USER,APPLY_DATE,APPROVAL_STATE
+		) values (#{BUSINESS_CODE},	
+		#{BILL_CODE},	
+		#{APPLY_USER},	
+		#{APPLY_DATE},	
+		#{APPROVAL_STATE}
+		);
+		<foreach item="item" index="index" collection="listDetail" open=" " separator="; " close=" ">
+			<if test="item!=null">
+				insert into TB_APPROVAL_DETAIL
+				(
+					BUSINESS_CODE,	
+					BILL_CODE,	
+					CURRENT_LEVEL,	
+					NEXT_LEVEL,	
+					ACTIVE_FLAG,	
+					UNIT_CODE,	
+					DEPART_CODE,	
+					APPROVAL_STATE,	
+					ROLE_CODE,	
+					APPROVAL_USER,	
+					APPROVAL_DATE,	
+					APPROVAL_ADVICE
+				) values (#{item.BUSINESS_CODE},
+					#{item.BILL_CODE},
+					#{item.CURRENT_LEVEL},
+					#{item.NEXT_LEVEL},
+					#{item.ACTIVE_FLAG},
+					#{item.UNIT_CODE},
+					#{item.DEPART_CODE},
+					#{item.APPROVAL_STATE},
+					#{item.ROLE_CODE},
+					#{item.APPROVAL_USER},
+					#{item.APPROVAL_DATE},
+					#{item.APPROVAL_ADVICE})
+					</if>
+		</foreach>
+	</insert>
+	<!-- 判断系统变更是否已上报-->
+	<select id="listApprovalDetailAndMain" parameterType="pd" resultType="pd">
+		select * from TB_APPROVAL_MAIN
+		where 
+			BILL_CODE = #{BILL_CODE}
+	</select>
+	
+	<!-- 取消系统变更上报-->
+	<delete id="delete" parameterType="pd">
+		delete from TB_APPROVAL_DETAIL		
+		where 
+			BILL_CODE = #{BILL_CODE};
+		delete from TB_APPROVAL_MAIN		
+		where 
+			BILL_CODE = #{BILL_CODE}
+	</delete>
+	
+	<!-- 审批通过-更新审批明细表和主表 -->
+	<update id="editDetail" parameterType="pd">
+<!-- 	更新审批明细表审批人、审批状态等信息 -->
+		update TB_APPROVAL_DETAIL
+		set
+		 
+			APPROVAL_STATE = #{APPROVAL_STATE},
+<!-- 			ROLE_CODE = #{ROLE_CODE}, -->
+			APPROVAL_USER = #{APPROVAL_USER},
+			APPROVAL_DATE = #{APPROVAL_DATE},
+			APPROVAL_ADVICE = #{APPROVAL_ADVICE}
+		where 
+		BILL_CODE = #{BILL_CODE}
+		AND
+		CURRENT_LEVEL=#{CURRENT_LEVEL};
+<!-- 		激活审批明细表下级审批状态 -->
+		update TB_APPROVAL_DETAIL
+		set
+		 ACTIVE_FLAG='1'
+		where 
+		BILL_CODE = #{BILL_CODE}
+		AND
+		CURRENT_LEVEL=#{NEXT_LEVEL};
+<!-- 		更新审批主表状态 -->
+			update tb_approval_main
+		set 
+		APPROVAL_STATE=#{APPROVAL_STATE_MAIN}
+		<!-- 车易家 2020-03-01 添加 -->
+		where 
+		BILL_CODE = #{BILL_CODE}
+	</update>
+	
+	<!-- 审批退回-更新审批明细表和主表 -->
+	<update id="editReturnDetail" parameterType="pd">
+		update TB_APPROVAL_DETAIL
+		set		 
+			APPROVAL_STATE = #{APPROVAL_STATE},
+			APPROVAL_USER = #{APPROVAL_USER},
+			APPROVAL_DATE = #{APPROVAL_DATE},
+			APPROVAL_ADVICE = #{APPROVAL_ADVICE}
+		where 
+		BILL_CODE = #{BILL_CODE}
+		AND
+		CURRENT_LEVEL=#{CURRENT_LEVEL};
+		update TB_APPROVAL_MAIN
+		set 
+		APPROVAL_STATE=#{APPROVAL_STATE}
+		where 
+		BILL_CODE = #{BILL_CODE}
+	</update>
+		<!-- 通过业务表单编码等获取审批明细表数据-->
+	<select id="ListDetailByBillCode" parameterType="pd" resultType="pd">
+		select * from TB_APPROVAL_DETAIL
+		where 
+			BILL_CODE = #{BILL_CODE}
+	</select>	
+	<select id="listStatistic" parameterType="page" resultType="pd">
+	SELECT c.BUSINESS_CODE,CASE WHEN b.BUSINESS_NAME IS NOT NULL THEN b.BUSINESS_NAME ELSE '合计' END BUSINESS_NAME,c.total,c.solve,  CONCAT( ROUND( c.solve/c.total * 100, 2 ), '', '%' ) AS solverate FROM 
+		(SELECT 
+		  a.BUSINESS_CODE,
+		  COUNT(a.BUSINESS_CODE) AS total,
+		  SUM(
+		    CASE
+		      WHEN a.APPROVAL_STATE = '1' 
+		      THEN 1 
+		      ELSE 0 
+		    END
+		  ) AS solve
+	FROM
+ 		tb_approval_main a 
+ 		LEFT JOIN view_change_bg d 
+ 		ON a.BILL_CODE=d.BILL_CODE
+		  where 1=1
+		<if test="pd.START_DATE!=null and pd.START_DATE!='' "> 
+			  and SUBSTRING(a.APPLY_DATE,1,10) &gt;= #{pd.START_DATE} 
+		</if>
+		<if test="pd.END_DATE!=null and pd.END_DATE!=''"> 
+			  and SUBSTRING(a.APPLY_DATE,1,10) &lt;= #{pd.END_DATE} 
+		</if> 
+		<if test="pd.UNIT_CODE!=null and pd.UNIT_CODE!=''"> 
+			  and d.UNIT_CODE= #{pd.UNIT_CODE} 
+		</if> 
+		GROUP BY a.BUSINESS_CODE WITH ROLLUP)AS c 
+		LEFT JOIN tb_approval_business_config b 
+		ON  c.BUSINESS_CODE=b.BUSINESS_CODE
+	</select>
+</mapper>

@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TestPaperMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_test_paper
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		TEST_PAPER_ID,	
+		TEST_PAPER_TITLE,	
+		COURSE_TYPE_ID,	
+		TEST_PAPER_TYPE,	
+		TEST_PAPER_DIFFICULTY,	
+		TEST_QUESTION_SOURCE,	
+		TEST_QUESTION_NUM,	
+		TEST_PAPER_SCORE,	
+		ANSWER_TIME,	
+		TEST_CHANCE,	
+		QUALIFIED_SCORE,	
+		STATE,	
+		CREATE_USER,	
+		CREATE_DATE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{TEST_PAPER_ID},	
+		#{TEST_PAPER_TITLE},	
+		#{COURSE_TYPE_ID},	
+		#{TEST_PAPER_TYPE},	
+		#{TEST_PAPER_DIFFICULTY},	
+		#{TEST_QUESTION_SOURCE},	
+		#{TEST_QUESTION_NUM},	
+		#{TEST_PAPER_SCORE},	
+		#{ANSWER_TIME},	
+		#{TEST_CHANCE},	
+		#{QUALIFIED_SCORE},	
+		#{STATE},	
+		#{CREATE_USER},	
+		#{CREATE_DATE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="Field"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 向试卷明细表插入数据 -->
+	<insert id="savePaperDetail" parameterType="pd">
+		insert into
+			tb_test_paper_detail 
+		(
+			TEST_PAPER_ID,
+			TEST_QUESTION_ID,
+			DISP_ORDER
+		) values (
+			#{TEST_PAPER_ID},
+			#{TEST_QUESTION_ID},
+			#{DISP_ORDER}
+		)
+	</insert>
+	
+	<!-- 向生成随机信息插入数据 -->
+	<insert id="savePaperParam" parameterType="pd">
+		insert into
+		 	tb_test_rand_param
+		(
+			TEST_PAPER_ID,
+			TEST_QUESTION_TYPE,
+			TEST_QUESTION_DIFFICULTY,
+			TEST_QUESTION_NUM,
+			TEST_QUESTION_SCORE,
+			CREATE_USER,
+			CREATE_DATE
+		) values (
+			#{TEST_PAPER_ID},
+			#{TEST_QUESTION_TYPE},
+			#{TEST_QUESTION_DIFFICULTY},
+			#{TEST_QUESTION_NUM},
+			#{TEST_QUESTION_SCORE},
+			#{CREATE_USER},
+			#{CREATE_DATE}
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="deletePaperDetail" parameterType="pd">
+		 delete from tb_test_paper_detail
+		    where TEST_PAPER_ID = #{TEST_PAPER_ID}
+	</delete>
+	
+	<!-- 删除-->
+	<delete id="deletePaperParam" parameterType="pd">
+		delete from tb_test_rand_param
+		    where TEST_PAPER_ID = #{TEST_PAPER_ID}
+	</delete>
+	
+	<!-- 通过id查询所有试题 -->
+	<select id="listPaperDetail" parameterType="pd" resultType="pd">
+		select
+			TEST_PAPER_ID,
+			TEST_QUESTION_ID,
+			DISP_ORDER
+		from
+			tb_test_paper_detail
+		where
+			TEST_PAPER_ID = #{TEST_PAPER_ID} 
+	</select>
+	
+	<!-- 通过id查询随机信息 -->
+	<select id="listParamById" parameterType="pd" resultType="pd">
+		select
+			TEST_PAPER_ID,
+			TEST_QUESTION_TYPE,
+			TEST_QUESTION_DIFFICULTY,
+			TEST_QUESTION_NUM,
+			TEST_QUESTION_SCORE  
+		from
+			tb_test_rand_param
+		where
+			TEST_PAPER_ID = #{TEST_PAPER_ID}
+	</select>
+	
+	
+	<!-- 删除-->
+	<update id="delete" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set
+			STATE = 0
+		where 
+			TEST_PAPER_ID = #{TEST_PAPER_ID}
+	</update>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			TEST_PAPER_TITLE = #{TEST_PAPER_TITLE},
+			COURSE_TYPE_ID = #{COURSE_TYPE_ID},
+			TEST_PAPER_TYPE = #{TEST_PAPER_TYPE},
+			TEST_PAPER_DIFFICULTY = #{TEST_PAPER_DIFFICULTY},
+			TEST_QUESTION_SOURCE = #{TEST_QUESTION_SOURCE},
+			TEST_QUESTION_NUM = #{TEST_QUESTION_NUM},
+			TEST_PAPER_SCORE = #{TEST_PAPER_SCORE},
+			ANSWER_TIME = #{ANSWER_TIME},
+			TEST_CHANCE = #{TEST_CHANCE},
+			QUALIFIED_SCORE = #{QUALIFIED_SCORE}
+		where 
+			TEST_PAPER_ID = #{TEST_PAPER_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select
+			b.COURSE_TYPE_NAME,
+			a.TEST_PAPER_ID,	
+			a.TEST_PAPER_TITLE,	
+			a.COURSE_TYPE_ID,	
+			a.TEST_PAPER_TYPE,	
+			a.TEST_PAPER_DIFFICULTY,	
+			a.TEST_QUESTION_SOURCE,	
+			a.TEST_QUESTION_NUM,	
+			a.TEST_PAPER_SCORE,	
+			a.ANSWER_TIME,	
+			a.TEST_CHANCE,	
+			a.QUALIFIED_SCORE,	
+			a.CREATE_DATE
+		from 
+			tb_test_paper AS a
+		left join
+			tb_course_type AS b
+		on
+			a.COURSE_TYPE_ID = b.COURSE_TYPE_ID
+		where 
+			a.STATE = 1 
+		and	
+			TEST_PAPER_ID = #{TEST_PAPER_ID}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			b.COURSE_TYPE_NAME,
+			a.TEST_PAPER_ID,	
+			a.TEST_PAPER_TITLE,	
+			a.COURSE_TYPE_ID,	
+			a.TEST_PAPER_TYPE,	
+			a.TEST_PAPER_DIFFICULTY,	
+			a.TEST_QUESTION_SOURCE,	
+			a.TEST_QUESTION_NUM,	
+			a.TEST_PAPER_SCORE,	
+			a.ANSWER_TIME,	
+			a.TEST_CHANCE,	
+			a.QUALIFIED_SCORE,	
+			a.CREATE_DATE
+		from 
+			tb_test_paper AS a
+		left join
+			tb_course_type AS b
+		on
+			a.COURSE_TYPE_ID = b.COURSE_TYPE_ID
+		where a.STATE = 1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(
+					a.TEST_PAPER_TITLE LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		<where>
+		<if test="STATE!= null and STATE != ''">
+			and STATE=#{STATE}			
+		</if>
+		</where>
+	</select>
+	
+	<!-- 批量删除 -->
+	<update id="deleteAll" parameterType="String">
+		update
+		<include refid="tableName"></include>
+		set
+			STATE = 0
+		where  
+			TEST_PAPER_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+<!-- 	獲取在線考試試題信息 -->
+	<select id="datalistExam" parameterType="page" resultType="pd">
+		SELECT 		   
+			t.TEST_PAPER_ID,	
+			t.TEST_PAPER_TITLE,	
+			t.COURSE_TYPE_ID,	
+			t.TEST_PAPER_TYPE,	
+			t.TEST_PAPER_DIFFICULTY,	
+			t.TEST_QUESTION_SOURCE,	
+			t.TEST_QUESTION_NUM,	
+			t.TEST_PAPER_SCORE,	
+			t.ANSWER_TIME,	
+			t.TEST_CHANCE,	
+			t.QUALIFIED_SCORE,	
+			t.STATE,	
+			t.CREATE_USER,	
+			t.CREATE_DATE,
+			t.TEST_QUESTION_ID,			
+			d.TEST_QUESTION_TITLE,
+			d.COURSE_TYPE_ID,
+			d.TEST_QUESTION_TYPE,
+			d.TEST_QUESTION_DIFFICULTY,
+			d.TEST_QUESTION_SCORE,
+			d.TEST_QUESTION_ANSWER,
+			d.TEST_ANSWER_NOTE			
+			FROM
+			  (SELECT 
+			    a.*,b.TEST_QUESTION_ID
+			  FROM
+			    tb_test_paper a,
+			    tb_test_paper_detail b 
+			  WHERE a.TEST_PAPER_ID = b.TEST_PAPER_ID AND a.TEST_PAPER_ID=#{pd.TEST_PAPER_ID}) AS t 
+			    LEFT JOIN 
+			  tb_test_question d
+			  ON
+			 t.TEST_QUESTION_ID = d.TEST_QUESTION_ID 
+			  	 ORDER BY  d.TEST_QUESTION_TYPE,
+			  	 T.TEST_QUESTION_ID			  		  		 
+	</select>
+	<!-- 	获取试题答案信息 -->
+	<select id="listAnswer" parameterType="page" resultType="pd">
+		SELECT 
+		   t.TEST_PAPER_ID,   
+		   t.TEST_QUESTION_ID,
+		   f.TEST_QUESTION_ITEM_TITLE,
+		   f.TEST_QUESTION_ITEM_CONTENT,
+		   f.IS_RIGHT,
+		   f.ITEM_EXPLAIN,
+		   f.STATE,
+		   f.CREATE_USER,
+		   f.CREATE_DATE,
+		   f.TEST_QUESTION_TYPE
+		   FROM
+		     (SELECT 
+		       a.TEST_PAPER_ID,b.TEST_QUESTION_ID
+		     FROM
+		       tb_test_paper a,
+		       tb_test_paper_detail b 
+		     WHERE a.TEST_PAPER_ID = b.TEST_PAPER_ID  AND a.TEST_PAPER_ID=#{pd.TEST_PAPER_ID}) AS t 
+		     LEFT JOIN 
+		     (SELECT  c.*,  d.TEST_QUESTION_TYPE 
+		     FROM 
+		      tb_test_question d   LEFT JOIN tb_test_question_item c
+		     ON  c.TEST_QUESTION_ID=d.TEST_QUESTION_ID) AS f
+		 ON t.TEST_QUESTION_ID = f.TEST_QUESTION_ID 
+		where 
+			1=1
+	<if test="pd.IS_RIGHT!= null and pd.IS_RIGHT != ''">
+			and IS_RIGHT=#{pd.IS_RIGHT}				
+		</if>	  		  		 
+	</select>
+	<select id="listExamHistory" parameterType="page" resultType="pd">
+	SELECT * 
+	from 	
+		(SELECT 
+		a.TEST_PLAN_ID,	
+		a.TEST_PAPER_ID,
+		b.TEST_QUESTION_ID,	
+		b.TEST_ANSWER,
+		b.TEST_CORRECT_ANSWER,		
+		a.TEST_USER,	
+		a.TEST_TIME,	
+		a.TEST_COUNT,	
+		a.TEST_SCORE,	
+		a.IF_QUALIFIED,	
+		a.TEST_QUESTION_NUM,	
+		a.STATE,	
+		a.CREATE_USER,	
+		a.CREATE_DATE
+		FROM tb_test_main	a	 
+ 		LEFT JOIN tb_test_detail b  ON a.TEST_PAPER_ID=b.TEST_PAPER_ID
+ 		AND a.TEST_USER=b.TEST_USER
+ 		WHERE
+ 		a.TEST_PLAN_ID=#{pd.TEST_PLAN_ID}
+ 		AND
+ 		a.TEST_USER=#{pd.TEST_USER}
+ 		AND
+ 		a.TEST_PAPER_ID=#{pd.TEST_PAPER_ID}) as t 		
+ 		 LEFT JOIN 
+			  tb_test_question d
+			  ON
+			 t.TEST_QUESTION_ID = d.TEST_QUESTION_ID 
+			  	 ORDER BY  d.TEST_QUESTION_TYPE,
+			  	 T.TEST_QUESTION_ID			  		  	
+ 		
+ 		
+ 		
+	</select>
+</mapper>

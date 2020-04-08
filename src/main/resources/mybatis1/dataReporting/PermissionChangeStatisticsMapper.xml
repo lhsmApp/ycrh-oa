@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PermissionChangeStatisticsMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_di_permission_change_statistics
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		BUSI_DATE,
+		COMPANY_NAME,	
+		ACCOUNT_DELAY,	
+		ACCOUNT_UNLOCK,	
+		NEW_ROLES,	
+		DELETE_ROLES,	
+		NEW_ACCOUNTS,	
+		DELETE_ACCOUNTS,	
+		NEW_FMIS_ROLES,	
+		DELETE_FMIS_ROLES,	
+		CHANGE_USER_GROUP,	
+		CHANGE_PERSON_COUNT,	
+		STATE,
+		BILL_USER,	
+		USER_DEPART,
+		BILL_DATE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{BUSI_DATE},
+		#{COMPANY_NAME},	
+		#{ACCOUNT_DELAY},	
+		#{ACCOUNT_UNLOCK},	
+		#{NEW_ROLES},	
+		#{DELETE_ROLES},	
+		#{NEW_ACCOUNTS},	
+		#{DELETE_ACCOUNTS},	
+		#{NEW_FMIS_ROLES},	
+		#{DELETE_FMIS_ROLES},	
+		#{CHANGE_USER_GROUP},	
+		#{CHANGE_PERSON_COUNT},	
+		#{STATE},
+		#{BILL_USER},	
+		#{USER_DEPART},
+		#{BILL_DATE}	
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+			<include refid="tableName"></include>
+		(
+			<include refid="Field"></include>
+		) values (
+			<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			COMPANY_NAME = #{COMPANY_NAME},
+			ACCOUNT_DELAY = #{ACCOUNT_DELAY},
+			ACCOUNT_UNLOCK = #{ACCOUNT_UNLOCK},
+			NEW_ROLES = #{NEW_ROLES},
+			DELETE_ROLES = #{DELETE_ROLES},
+			NEW_ACCOUNTS = #{NEW_ACCOUNTS},
+			DELETE_ACCOUNTS = #{DELETE_ACCOUNTS},
+			NEW_FMIS_ROLES = #{NEW_FMIS_ROLES},
+			DELETE_FMIS_ROLES = #{DELETE_FMIS_ROLES},
+			CHANGE_USER_GROUP = #{CHANGE_USER_GROUP},
+			CHANGE_PERSON_COUNT = #{CHANGE_PERSON_COUNT},
+			STATE = #{STATE}
+		where 
+		ID = #{ID}
+	</update>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			ID,
+			COMPANY_NAME,	
+			ACCOUNT_DELAY,	
+			ACCOUNT_UNLOCK,	
+			NEW_ROLES,	
+			DELETE_ROLES,	
+			NEW_ACCOUNTS,	
+			DELETE_ACCOUNTS,	
+			NEW_FMIS_ROLES,	
+			DELETE_FMIS_ROLES,	
+			CHANGE_USER_GROUP,	
+			CHANGE_PERSON_COUNT	
+		from 
+		<include refid="tableName"></include>
+		where STATE = 1
+		<if test="pd.busiDate != null and pd.busiDate != ''">
+		and 
+			BUSI_DATE = #{pd.busiDate}
+		</if>
+		<if test="pd.USER_DEPART != null and pd.USER_DEPART != ''">
+		and 
+			USER_DEPART = #{pd.USER_DEPART}
+		</if>
+	</select>
+	
+	<!-- 按单位合计列表 -->
+	<select id="datalistPageByUnit" parameterType="page" resultType="pd">
+		select
+			ID,
+			COMPANY_NAME,	
+			SUM(ACCOUNT_DELAY) ACCOUNT_DELAY,	
+			SUM(ACCOUNT_UNLOCK) ACCOUNT_UNLOCK,	
+			SUM(NEW_ROLES) NEW_ROLES,	
+			SUM(DELETE_ROLES) DELETE_ROLES,	
+			SUM(NEW_ACCOUNTS) NEW_ACCOUNTS,	
+			SUM(DELETE_ACCOUNTS) DELETE_ACCOUNTS,	
+			SUM(NEW_FMIS_ROLES) NEW_FMIS_ROLES,	
+			SUM(DELETE_FMIS_ROLES) DELETE_FMIS_ROLES,	
+			SUM(CHANGE_USER_GROUP) CHANGE_USER_GROUP,	
+			SUM(CHANGE_PERSON_COUNT) CHANGE_PERSON_COUNT	
+		from 
+		<include refid="tableName"></include>
+		where STATE = 1
+		<if test="pd.START_DATE!=null and pd.START_DATE!='' "> 
+			  and SUBSTRING(BILL_DATE,1,8) &gt;= #{pd.START_DATE} 
+		</if>
+		<if test="pd.END_DATE!=null and pd.END_DATE!=''"> 
+			  and SUBSTRING(BILL_DATE,1,8) &lt;= #{pd.END_DATE} 
+		</if> 	
+		<if test="pd.YEAR_MONTH!=null and pd.YEAR_MONTH!=''"> 
+			  and BUSI_DATE  LIKE #{pd.YEAR_MONTH} 
+		</if>
+		GROUP BY ID,COMPANY_NAME
+		
+	</select>
+	<!--业务期间集合  -->
+	<select id="listBusiDate" parameterType="pd" resultType="pd">
+		select BUSI_DATE from  <include refid="tableName"></include> group by BUSI_DATE
+	</select>
+	
+	<!-- 批量删除 -->
+	<update id="deleteAll" parameterType="String">
+		update
+			<include refid="tableName"></include>
+		set
+			STATE = 0
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+	
+	<!-- *********************导入导出********************************* -->
+	<!-- 导出列表 -->
+	<select id="exportList" parameterType="page" resultType="pd">
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1
+			<if test="pd.BUSI_DATE!= null and pd.BUSI_DATE!= ''">
+			and BUSI_DATE = #{pd.BUSI_DATE}
+			</if>
+		order by 
+			ID
+	</select>
+	
+	<!-- 更新数据 -->
+	<update id="delAndIns" parameterType="pd">
+		<foreach item="item" index="index" collection="list" open=" " separator=" " close=" ">
+		    delete from <include refid="tableName"></include>
+		    where ID = #{item.ID};
+	        insert into 
+	        <include refid="tableName"></include>
+		       (
+					<include refid="Field"></include>
+				) value (
+					#{item.BUSI_DATE},
+					#{item.COMPANY_NAME},	
+					#{item.ACCOUNT_DELAY},	
+					#{item.ACCOUNT_UNLOCK},	
+					#{item.NEW_ROLES},	
+					#{item.DELETE_ROLES},	
+					#{item.NEW_ACCOUNTS},	
+					#{item.DELETE_ACCOUNTS},	
+					#{item.NEW_FMIS_ROLES},	
+					#{item.DELETE_FMIS_ROLES},	
+					#{item.CHANGE_USER_GROUP},	
+					#{item.CHANGE_PERSON_COUNT},	
+					#{item.STATE},
+					#{item.BILL_USER},	
+					#{item.USER_DEPART},
+					#{item.BILL_DATE}
+				);
+		</foreach>
+	</update>
+	
+	<!-- 导出模板 -->
+	<select id="exportModel" parameterType="pd" resultType="pd">
+		select 
+			<include refid="Field"></include> 
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1 
+		limit 1
+	</select>
+</mapper>

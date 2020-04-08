@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OperationStatisticsMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_di_operation_statistics
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		BUSI_DATE,
+		COMPANY_NAME,	
+		AGENCY_OPER_NUM,	
+		NETWORK_OPER_NUM,	
+		SECURITY_OPER_NUM,	
+		ERP_OPER_NUM,	
+		CLOUD_OPER_NUM,	
+		TOTAL_OPER_NUM,	
+		STATE,
+		BILL_USER,	
+		USER_DEPART,
+		BILL_DATE	
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{BUSI_DATE},
+		#{COMPANY_NAME},	
+		#{AGENCY_OPER_NUM},	
+		#{NETWORK_OPER_NUM},	
+		#{SECURITY_OPER_NUM},	
+		#{ERP_OPER_NUM},	
+		#{CLOUD_OPER_NUM},	
+		#{TOTAL_OPER_NUM},	
+		#{STATE},
+		#{BILL_USER},	
+		#{USER_DEPART},
+		#{BILL_DATE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+			<include refid="tableName"></include>
+		(
+			<include refid="Field"></include>
+		) value (
+			<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			COMPANY_NAME = #{COMPANY_NAME},
+			AGENCY_OPER_NUM = #{AGENCY_OPER_NUM},
+			NETWORK_OPER_NUM = #{NETWORK_OPER_NUM},
+			SECURITY_OPER_NUM = #{SECURITY_OPER_NUM},
+			ERP_OPER_NUM = #{ERP_OPER_NUM},
+			CLOUD_OPER_NUM = #{CLOUD_OPER_NUM},
+			TOTAL_OPER_NUM = #{TOTAL_OPER_NUM}
+		where 
+			ID = #{ID}
+	</update>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+			ID,
+			COMPANY_NAME,	
+			AGENCY_OPER_NUM,	
+			NETWORK_OPER_NUM,	
+			SECURITY_OPER_NUM,	
+			ERP_OPER_NUM,	
+			CLOUD_OPER_NUM,	
+			TOTAL_OPER_NUM
+		from 
+		<include refid="tableName"></include>
+		where STATE = 1
+		<if test="pd.busiDate != null and pd.busiDate != ''">
+		and 
+			BUSI_DATE = #{pd.busiDate}
+		</if>
+		<if test="pd.USER_DEPART != null and pd.USER_DEPART != ''">
+		and 
+			USER_DEPART = #{pd.USER_DEPART}
+		</if>
+	</select>
+	
+	<!-- 批量删除 -->
+	<update id="deleteAll" parameterType="String">
+		update
+			<include refid="tableName"></include>
+		set
+			STATE = 0
+		where 
+			ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</update>
+	
+	<!--业务期间集合  -->
+	<select id="listBusiDate" parameterType="pd" resultType="pd">
+		select BUSI_DATE from  <include refid="tableName"></include> group by BUSI_DATE
+	</select>
+	
+	<!-- 导出列表 -->
+	<select id="exportList" parameterType="page" resultType="pd">
+		select 
+			<include refid="Field"></include>
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1
+			<if test="pd.BUSI_DATE!= null and pd.BUSI_DATE!= ''">
+			and BUSI_DATE = #{pd.BUSI_DATE}
+			</if>
+		order by 
+			ID
+	</select>
+	
+	<!-- 更新数据 -->
+	<update id="delAndIns" parameterType="pd">
+		<foreach item="item" index="index" collection="list" open=" " separator=" " close=" ">
+		    delete from <include refid="tableName"></include>
+		    where ID = #{item.ID};
+	        insert into 
+	        <include refid="tableName"></include>
+		       (
+					<include refid="Field"></include>
+				) value (
+					#{item.BUSI_DATE},
+					#{item.COMPANY_NAME},	
+					#{item.AGENCY_OPER_NUM},	
+					#{item.NETWORK_OPER_NUM},	
+					#{item.SECURITY_OPER_NUM},	
+					#{item.ERP_OPER_NUM},	
+					#{item.CLOUD_OPER_NUM},	
+					#{item.TOTAL_OPER_NUM},	
+					#{item.STATE},
+					#{item.BILL_USER},	
+					#{item.USER_DEPART},
+					#{item.BILL_DATE}
+				);
+		</foreach>
+	</update>
+	
+	<!-- 导出模板 -->
+	<select id="exportModel" parameterType="pd" resultType="pd">
+		select 
+			<include refid="Field"></include> 
+		from 
+			<include refid="tableName"></include>
+		where 
+			STATE = 1 
+		limit 1
+	</select>
+</mapper>

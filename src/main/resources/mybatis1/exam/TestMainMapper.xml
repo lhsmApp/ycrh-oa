@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TestMainMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		tb_test_main
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		TEST_PLAN_ID,	
+		TEST_PAPER_ID,	
+		TEST_USER,	
+		TEST_TIME,	
+		TEST_COUNT,	
+		TEST_SCORE,	
+		IF_QUALIFIED,	
+		TEST_QUESTION_NUM,	
+		STATE,	
+		CREATE_USER,	
+		CREATE_DATE
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{TEST_PLAN_ID},	
+		#{TEST_PAPER_ID},	
+		#{TEST_USER},	
+		#{TEST_TIME},	
+		#{TEST_COUNT},	
+		#{TEST_SCORE},	
+		#{IF_QUALIFIED},	
+		#{TEST_QUESTION_NUM},	
+		#{STATE},	
+		#{CREATE_USER},	
+		#{CREATE_DATE}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="Field"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			TESTMAIN_ID = #{TESTMAIN_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			TEST_ID = #{TEST_ID},
+			TEST_PAPER_ID = #{TEST_PAPER_ID},
+			TEST_USER = #{TEST_USER},
+			TEST_TIME = #{TEST_TIME},
+			TEST_COUNT = #{TEST_COUNT},
+			TEST_SCORE = #{TEST_SCORE},
+			IF_QUALIFIED = #{IF_QUALIFIED},
+			TEST_QUESTION_NUM = #{TEST_QUESTION_NUM},
+			STATE = #{STATE},
+			CREATE_USER = #{CREATE_USER},
+			CREATE_DATE = #{CREATE_DATE},
+		TESTMAIN_ID = TESTMAIN_ID
+		where 
+		TESTMAIN_ID = #{TESTMAIN_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			TESTMAIN_ID = #{TESTMAIN_ID}
+	</select>
+	
+	<select id="paperListPage" parameterType="page" resultType="pd">
+		SELECT 			
+			b.TEST_PLAN_ID,
+			b.TEST_PAPER_ID,
+			b.START_DATE,
+			b.END_DATE,
+			b.TEST_PLAN_NAME, 
+			b.TEST_PLAN_PERSONS,
+			b.COURSE_COVER,
+			c.TEST_PAPER_TITLE,
+			c.COURSE_TYPE_ID,
+			c.TEST_PAPER_TYPE,
+			c.TEST_PAPER_DIFFICULTY,
+			c.TEST_QUESTION_NUM,
+			c.TEST_PAPER_SCORE,
+			c.ANSWER_TIME,
+			c.QUALIFIED_SCORE 
+
+		FROM tb_gl_plan_user AS a
+
+		LEFT JOIN tb_test_plan AS b ON a.PLAN_ID = b.TEST_PLAN_ID
+
+		LEFT JOIN tb_test_paper AS c ON b.TEST_PAPER_ID = c.TEST_PAPER_ID
+
+		WHERE 
+			a.STUDENT_ID = #{pd.STUDENT_ID} 
+		AND 
+			a.PLAN_TYPE =1 
+		AND 
+			b.STATE = 1 
+		AND 
+			c.STATE = 1;
+ 		<!-- 关键词检索 -->
+		<if test="pd.keywords!= null and pd.keywords != ''">
+		AND
+				(
+					c.TEST_PAPER_TITLE LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					<!-- 根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')  -->
+				
+				)
+		</if> 
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		SELECT
+			a.TEST_PLAN_ID,	
+			a.TEST_PAPER_ID,
+			e.TEST_PLAN_NAME,
+			e.COURSE_COVER,
+			a.TEST_USER,	
+			a.TEST_TIME,	
+			a.TEST_COUNT,	
+			a.TEST_SCORE,	
+			a.IF_QUALIFIED,	
+			a.TEST_QUESTION_NUM,	
+			a.STATE,	
+			a.CREATE_DATE,
+			b.STUDENT_NAME,
+			c.NAME,
+			d.TEST_PAPER_TITLE
+		FROM 
+			tb_test_main AS a
+		LEFT JOIN tb_train_student AS b ON a.TEST_USER = b.STUDENT_ID
+		LEFT JOIN oa_department AS c ON b.DEPART_CODE = c.DEPARTMENT_CODE
+		LEFT JOIN tb_test_paper AS d ON d.TEST_PAPER_ID = a.TEST_PAPER_ID
+		LEFT JOIN tb_test_plan AS e ON a.TEST_PLAN_ID = e.TEST_PLAN_ID
+		WHERE 
+			a.STATE=1
+		AND
+			e.STATE=1
+		<if test="pd.TEST_PLAN_ID != null and pd.TEST_PLAN_ID != ''">
+		AND
+			a.TEST_PLAN_ID = #{pd.TEST_PLAN_ID}		
+		</if> 
+		<!-- 关键词检索 -->
+		<if test="pd.keywords!= null and pd.keywords != ''">
+			and
+				(
+					b.STUDENT_NAME LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					<!-- 根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')  -->
+				
+				)
+		</if> 
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			TESTMAIN_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!--将考试成绩写入主表和明细表-->
+	<insert id="saveExamResult" parameterType="pd">
+	insert into tb_test_main
+	(TEST_PLAN_ID,	
+		TEST_PAPER_ID,	
+		TEST_USER,	
+		TEST_TIME,	
+		TEST_COUNT,	
+		TEST_SCORE,	
+		IF_QUALIFIED,	
+		TEST_QUESTION_NUM,	
+		STATE,	
+		CREATE_USER,	
+		CREATE_DATE)
+	values(
+		#{TEST_PLAN_ID},	
+		#{TEST_PAPER_ID},	
+		#{TEST_USER},	
+		#{TEST_TIME},	
+		#{TEST_COUNT},	
+		#{TEST_SCORE},	
+		#{IF_QUALIFIED},	
+		#{TEST_QUESTION_NUM},	
+		#{STATE},	
+		#{CREATE_USER},	
+		#{CREATE_DATE}
+		);
+		<foreach item="item" index="index" collection="answerList" open=" " separator="; " close=" ">
+			<if test="item!=null">
+				insert into tb_test_detail
+				(
+					TEST_USER,
+					TEST_PAPER_ID,
+					TEST_QUESTION_ID,
+					TEST_TIME,
+					TEST_ANSWER,
+					TEST_CORRECT_ANSWER
+				) values (#{TEST_USER},
+					#{TEST_PAPER_ID},
+					#{item.TEST_QUESTION_ID},
+					#{TEST_TIME},
+					#{item.TEST_ANSWER},
+					#{item.TEST_CORRECT_ANSWER}	
+					)			
+					</if>
+		</foreach>
+	
+	</insert>
+	<select id="listByUser" parameterType="pd" resultType="pd">
+		SELECT * from tb_test_main		
+ 		WHERE 
+ 			TEST_PLAN_ID=#{TEST_PLAN_ID}
+ 		AND 
+ 			TEST_PAPER_ID=#{TEST_PAPER_ID}
+		AND
+			TEST_USER=#{TEST_USER}
+	</select>
+	
+</mapper>
